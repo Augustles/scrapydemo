@@ -10,15 +10,26 @@ from scrapy.contrib.pipeline.images import ImagePipeline
 
 class DoubanPipeline(ImagePipeline):
     # get_media_requests函数下载
+
     def get_media_requests(self, item, spider):
         for url in item['images_urls']:
             yield scrapy.Request(url)
+
     # 修改lib/python2.7/site-packages/scrapy/pipelines/image.py
     # file_path文件名修改
-    # def file_path(self, request, response=None, info=None):
+    # def file_path(self, request, item, response=None, info=None):
     #     open("image_urls.txt","a").write(request.url + "\n")
     #     image_guid = request.url.split('/')[-1]
+    #     image_guid = item['image_name']
     #     return 'full/%s' % (image_guid)
+
+    # 过滤掉一些不符合的item
+    # def process_item(self, item, spider):
+    #     for word in self.words_to_filter:
+    #         if word in unicode(item['description']).lower():
+    #             raise DropItem("Contains forbidden word: %s" % word)
+    #     else:
+    #         return item
 
 # mysql数据库连接
 # from scrapy import log

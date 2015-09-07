@@ -5,13 +5,16 @@ from douban.items import DoubanItem
 from bs4 import BeautifulSoup  # 加载beautiful
 # pip install beautifulsoup4
 # import os
-# scrapy crawl douban -o douban.json -t json 下载为douban.json 
+# scrapy crawl douban -o douban.json -t json 下载为douban.json
 # scrapy crawl douban -o douban.csv csv格式
+# scrapy genspider -t basic boboSpider 'douban.com' 生成一个basicspider
+
 
 class doubanSpider(scrapy.spiders.Spider):
     name = 'douban'  # 定义spider名字
     allowed_domains = ['douban.com', ]  # 允许爬取域名列表(可选)
     start_urls = []  # 开始爬取的列表
+    # download_delay = 1 # 爬取速度为1s,防止ban
     for y in xrange(0, 240, 25):
         start_urls.append(
             'http://www.douban.com/doulist/38849533/?start={0}&sort=seq&sub_type='.format(y))
@@ -32,7 +35,7 @@ class doubanSpider(scrapy.spiders.Spider):
         #         yield item
 
         soup = BeautifulSoup(response.body)  # 用beautifulsoup解析
-        print soup
+        # print soup
         for y in soup.find_all('div', attrs={'class': 'doulist-item'}):
             item = DoubanItem()
             item['title'] = y.find('div', attrs={'class': 'title'}).a.text
