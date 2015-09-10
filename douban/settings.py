@@ -16,14 +16,18 @@ NEWSPIDER_MODULE = 'douban.spiders'
 
 # 开启pipeimage组件
 ITEM_PIPELINES = {
-    'scrapy.contrib.pipeline.images.ImagesPipeline': 1, }
+    'douban.pipelines.DoubanPipeline': 500,
+    # 'douban.pipelines.MySQLStorePipeline': 2,
+    # 'scrapy.contrib.pipeline.images.ImagesPipeline': 1,
+}
 # 下载位置
 IMAGES_STORE = os.getcwd() + 'img'
 
-# 随机user-agent
+# 随机user-agent, 代理ip切换
 DOWNLOADER_MIDDLEWARES = {
     'scrapy.contrib.downloadermiddleware.useragent.UserAgentMiddleware': None,
-    'douban.spiders.userAgent.RandomUserAgentMiddleware': 400
+    'douban.userAgent.RandomUserAgentMiddleware': 2,
+    'douban.pipelines.ProxyMiddleware': 3,
 }
 # douban.spiders为目录, userAgent是文件
 
@@ -43,14 +47,10 @@ DOWNLOADER_MIDDLEWARES = {
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
 # CONCURRENT_REQUESTS=32
 
+# 网站ip限制, crawlera
 # 防止ban
 # DOWNLOAD_DELAY=3
 
-# The download delay setting will honor only one of:
-# CONCURRENT_REQUESTS_PER_DOMAIN=16
-# CONCURRENT_REQUESTS_PER_IP=16
-
-# Disable cookies (enabled by default)
 # 禁止cookies,防止ban
 # COOKIES_ENABLED=False
 
@@ -69,22 +69,11 @@ DOWNLOADER_MIDDLEWARES = {
 #    'douban.middlewares.MyCustomSpiderMiddleware': 543,
 #}
 
-# Enable or disable downloader middlewares
-# See http://scrapy.readthedocs.org/en/latest/topics/downloader-middleware.html
-# DOWNLOADER_MIDDLEWARES = {
-#    'douban.middlewares.MyCustomDownloaderMiddleware': 543,
-#}
 
 # Enable or disable extensions
 # See http://scrapy.readthedocs.org/en/latest/topics/extensions.html
 # EXTENSIONS = {
 #    'scrapy.telnet.TelnetConsole': None,
-#}
-
-# Configure item pipelines
-# See http://scrapy.readthedocs.org/en/latest/topics/item-pipeline.html
-# ITEM_PIPELINES = {
-#    'douban.pipelines.SomePipeline': 300,
 #}
 
 

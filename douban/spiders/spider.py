@@ -2,28 +2,29 @@
 
 import scrapy
 from douban.items import DoubanItem
-from bs4 import BeautifulSoup  # 加载beautiful
+from scrapy.http import Request
+from bs4 import BeautifulSoup as bs  # 加载beautiful
+
 # pip install beautifulsoup4
 # import os
+
 # scrapy crawl douban -o douban.json -t json 下载为douban.json
 # scrapy crawl douban -o douban.csv csv格式
 # scrapy genspider -t basic boboSpider 'douban.com' 生成一个basicspider
+# 1. 调试 scrapy shell
+# 2. scrapy parse --spider=MySpider -d 3 http://music.douban.com/chart
+# 3. from scrapy.shell import inspect_response inspect_response(response)
+
 
 
 class doubanSpider(scrapy.spiders.Spider):
     name = 'douban'  # 定义spider名字
     allowed_domains = ['douban.com', ]  # 允许爬取域名列表(可选)
     start_urls = []  # 开始爬取的列表
-    # download_delay = 1 # 爬取速度为1s,防止ban
+    download_delay = 1  # 爬取速度为1s,防止ban
     for y in xrange(0, 240, 25):
         start_urls.append(
             'http://www.douban.com/doulist/38849533/?start={0}&sort=seq&sub_type='.format(y))
-    # global pre
-    # pre = os.getcwd()
-    # with open(pre+'/pic_links.txt','r') as f:
-    #     for line in f:
-    #         print line
-    #         start_urls.append(line.strip())
 
     def parse(self, response):  # 解析返回的URL数据
         # 下载直接整理的图片
@@ -34,7 +35,8 @@ class doubanSpider(scrapy.spiders.Spider):
         #         item['images'] = line[line.rfind('/')+1:].strip()
         #         yield item
 
-        soup = BeautifulSoup(response.body)  # 用beautifulsoup解析
+        # inspect_response(response, self) # 进入shell调试
+        soup = bs(response.body)  # 用beautifulsoup解析
         # print soup
         for y in soup.find_all('div', attrs={'class': 'doulist-item'}):
             item = DoubanItem()
@@ -43,4 +45,18 @@ class doubanSpider(scrapy.spiders.Spider):
             item['rating'] = y.find(
                 'span', attrs={'class': 'rating_nums'}).text
             item['major'] = y.find('div', attrs={'class': 'abstract'}).text
-            yield item  # 生成器返回匹配到的项目
+            # yield item # 生成器返回item传递到pipelines
+            # 测试meta传递参数
+            yield Request(url=item['link'], meta={'item': item}, callback=self.parse_item)
+
+    def parse_item(self, response):  # parse_details
+        item = response.meta['item']
+        # print item['title']
+        soup = bs(response.body)
+        # print soup.title.text
+        a = soup.find('img', attrs={'rel': 'v:image'})
+        a = a['src'] + '#' + item['title'].strip()
+        if 'thumb' in a:
+            a = a.replace('thumb', 'photo')
+        item['image_urls'] = [a]
+        yield item
