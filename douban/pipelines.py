@@ -34,11 +34,34 @@ class DoubanPipeline(ImagesPipeline):
     #     else:
     #         return item
 
+
+# 根据url去重
+import os
+from scrapy.dupefilters import RFPDupeFilter
+
+
+class SeenURLFilter(RFPDupeFilter):
+    """A dupe filter that considers the URL"""
+
+    def __init__(self, path=None, debug=False):
+        self.urls_seen = set()
+        RFPDupeFilter.__init__(self, path)
+
+    def request_seen(self, request):
+        fp = self.request_fingerprint(request)
+        if fp in self.fingerprints:
+            self.fingerprints.add(fp)
+            return True
+        self.fingerprints.add(fp)
+        if self.file:
+            self.file.write(fp + os.linesep)
+
 # import base64
 import random
 # Start your middleware class
 
 
+# 代理组件
 class ProxyMiddleware(object):
     # overwrite process request
 
@@ -59,6 +82,38 @@ class ProxyMiddleware(object):
         # encoded_user_pass = base64.encodestring(proxy_user_pass)
         # request.headers['Proxy-Authorization'] = 'Basic ' + encoded_user_pass
 
+
+# mongo组件
+import pymongo
+
+# from scrapy import log
+# from scrapy.conf import settings
+from scrapy.exceptions import DropItem
+
+
+class MongoDBPipeline(object):
+
+    def __init__(self):
+        self.server = 'localhost'
+        self.port = 27017
+        self.db = 'amazon'
+        self.col = 'movie'
+        connection = pymongo.MongoClient(self.server, self.port)
+        db = connection[self.db]
+        self.collection = db[self.col]
+
+    def process_item(self, item, spider):
+        err_msg = ''
+        for field, data in item.items():
+            if not data:
+                pass
+                # err_msg += 'Missing %s of poem from %sn' % (field, item['url'])
+        if err_msg:
+            raise DropItem(err_msg)
+        self.collection.insert(dict(item))  # , upsert=True, safe=True
+        # log.msg('Item written to MongoDB database %s/%s' % (self.db, self.col),
+        #         level=log.DEBUG, spider=spider)
+        return item
 
 
 # mysql数据库连接, 写入到mysql
@@ -84,7 +139,7 @@ class ProxyMiddleware(object):
 #         self.dbpool = adbapi.ConnectionPool('MySQLdb',
 #                                             db='scrapy',
 #                                             user='root',
-#                                             passwd='cxk517',
+#                                             passwd='Cxk517',
 #                                             cursorclass=MySQLdb.cursors.DictCursor,
 #                                             charset='utf8',
 #                                             use_unicode=False

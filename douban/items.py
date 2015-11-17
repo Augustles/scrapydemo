@@ -16,8 +16,7 @@ class DoubanItem(scrapy.Item):
     rating = scrapy.Field()
     rating_nums = scrapy.Field()
     major = scrapy.Field()
-    image_urls= scrapy.Field()
+    image_urls = scrapy.Field()
     images = scrapy.Field()
-
-
-
+    entry_time = scrapy.Field()
+    Url = scrapy.Field()

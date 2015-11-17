@@ -17,19 +17,29 @@ NEWSPIDER_MODULE = 'douban.spiders'
 # 开启pipeimage组件
 ITEM_PIPELINES = {
     'douban.pipelines.DoubanPipeline': 500,
-    # 'douban.pipelines.MySQLStorePipeline': 2,
-    # 'scrapy.contrib.pipeline.images.ImagesPipeline': 1,
+    # 'douban.pipelines.MySQLStorePipeline': 2, # mysql
+    'douban.pipelines.MongoDBPipeline': 501,  # mongo
+    # 'scrapy.contrib.pipeline.images.ImagesPipeline': 1, # 默认image的pipe
+    # 'douban.pipelines.DuplicatesPipeline': 502,
 }
 # 下载位置
 IMAGES_STORE = os.getcwd() + 'img'
 
-# 随机user-agent, 代理ip切换
+
 DOWNLOADER_MIDDLEWARES = {
     'scrapy.contrib.downloadermiddleware.useragent.UserAgentMiddleware': None,
-    'douban.userAgent.RandomUserAgentMiddleware': 2,
-    'douban.pipelines.ProxyMiddleware': 3,
+    'douban.userAgent.RandomUserAgentMiddleware': 2,  # 随机user-agent
+    # 'douban.pipelines.ProxyMiddleware': 3, # 代理ip
 }
 # douban.spiders为目录, userAgent是文件
+
+# 去重组件
+# DUPEFILTER_CLASS = 'douban.pipelines.SeenURLFilter'
+# mongo设置
+MONGODB_HOST = 'localhost'
+MONGODB_PORT = '27017'
+MONGODB_DATABASE = 'amazon'
+MONGODB_COLLECTION = 'movie'
 
 
 # scrapy 主要组件

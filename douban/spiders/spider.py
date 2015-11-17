@@ -14,7 +14,7 @@ from bs4 import BeautifulSoup as bs  # 加载beautiful
 # 1. 调试 scrapy shell
 # 2. scrapy parse --spider=MySpider -d 3 http://music.douban.com/chart
 # 3. from scrapy.shell import inspect_response inspect_response(response)
-
+# pip install pybloomfiltermmap 去重
 
 
 class doubanSpider(scrapy.spiders.Spider):
@@ -36,8 +36,13 @@ class doubanSpider(scrapy.spiders.Spider):
         #         yield item
 
         # inspect_response(response, self) # 进入shell调试
-        soup = bs(response.body)  # 用beautifulsoup解析
+        import chardet
+        # 用beautifulsoup解析, 自动识别编码
+        soup = bs(response.body, from_encoding=chardet.detect(
+            response.body).get('encoding'))
+        # print chardet.detect(response.body).get('encoding')
         # print soup
+        import time
         for y in soup.find_all('div', attrs={'class': 'doulist-item'}):
             item = DoubanItem()
             item['title'] = y.find('div', attrs={'class': 'title'}).a.text
@@ -45,8 +50,10 @@ class doubanSpider(scrapy.spiders.Spider):
             item['rating'] = y.find(
                 'span', attrs={'class': 'rating_nums'}).text
             item['major'] = y.find('div', attrs={'class': 'abstract'}).text
+            item['entry_time'] = time.strftime('%Y-%m-%d')
             # yield item # 生成器返回item传递到pipelines
             # 测试meta传递参数
+            # Request(dont_filter=False) 未被复写(overridden)
             yield Request(url=item['link'], meta={'item': item}, callback=self.parse_item)
 
     def parse_item(self, response):  # parse_details
@@ -59,4 +66,5 @@ class doubanSpider(scrapy.spiders.Spider):
         if 'thumb' in a:
             a = a.replace('thumb', 'photo')
         item['image_urls'] = [a]
+        item['Url'] = response.url
         yield item
