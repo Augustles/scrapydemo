@@ -9,14 +9,20 @@ import scrapy
 
 
 class DoubanItem(scrapy.Item):
+    # amazon items
+    top = scrapy.Field()
+    url = scrapy.Field()
+    title = scrapy.Field()
+    price = scrapy.Field()
     # define the fields for your item here like:
     # Item 对象是种简单的容器，保存了爬取到得数据
-    title = scrapy.Field()
-    link = scrapy.Field()
-    rating = scrapy.Field()
-    rating_nums = scrapy.Field()
-    major = scrapy.Field()
-    image_urls = scrapy.Field()
-    images = scrapy.Field()
-    entry_time = scrapy.Field()
-    Url = scrapy.Field()
+    # douban的items
+    # title = scrapy.Field()
+    # link = scrapy.Field()
+    # rating = scrapy.Field()
+    # rating_nums = scrapy.Field()
+    # major = scrapy.Field()
+    # image_urls = scrapy.Field()
+    # images = scrapy.Field()
+    # entry_time = scrapy.Field()
+    # Url = scrapy.Field()

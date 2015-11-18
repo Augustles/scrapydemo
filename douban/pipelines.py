@@ -67,7 +67,7 @@ class ProxyMiddleware(object):
 
     def process_request(self, request, spider):
         ips = []
-        with open('good_ip.txt', 'r') as f:
+        with open('ava_ip.txt', 'r') as f:
             for line in f:
                 if line.strip():
                     ips.append(line.strip())
@@ -97,7 +97,7 @@ class MongoDBPipeline(object):
         self.server = 'localhost'
         self.port = 27017
         self.db = 'amazon'
-        self.col = 'movie'
+        self.col = 'hello'
         connection = pymongo.MongoClient(self.server, self.port)
         db = connection[self.db]
         self.collection = db[self.col]

@@ -13,10 +13,10 @@ BOT_NAME = 'douban'
 
 SPIDER_MODULES = ['douban.spiders']
 NEWSPIDER_MODULE = 'douban.spiders'
-
+# LOG_LEVEL = 'WARNING'
 # 开启pipeimage组件
 ITEM_PIPELINES = {
-    'douban.pipelines.DoubanPipeline': 500,
+    # 'douban.pipelines.DoubanPipeline': 500,
     # 'douban.pipelines.MySQLStorePipeline': 2, # mysql
     'douban.pipelines.MongoDBPipeline': 501,  # mongo
     # 'scrapy.contrib.pipeline.images.ImagesPipeline': 1, # 默认image的pipe
@@ -24,12 +24,18 @@ ITEM_PIPELINES = {
 }
 # 下载位置
 IMAGES_STORE = os.getcwd() + 'img'
-
-
+# 爬取速率
+DOWNLOAD_DELAY = 1
+# 宽度优先, 质量高
+SCHEDULER_ORDER = 'BFO'
+# 最大并行请求数
+CONCURRENT_REQUESTS_PER_SPIDER = 3
+# dns cache提高性能
+# EXTENSIONS = {'scrapy.contrib.resolver.CachingResolver': 0, }
 DOWNLOADER_MIDDLEWARES = {
     'scrapy.contrib.downloadermiddleware.useragent.UserAgentMiddleware': None,
-    'douban.userAgent.RandomUserAgentMiddleware': 2,  # 随机user-agent
-    # 'douban.pipelines.ProxyMiddleware': 3, # 代理ip
+    # 'douban.userAgent.RandomUserAgentMiddleware': 2,  # 随机user-agent
+    # 'douban.pipelines.ProxyMiddleware': 3,  # 代理ip
 }
 # douban.spiders为目录, userAgent是文件
 
