@@ -34,8 +34,8 @@ CONCURRENT_REQUESTS_PER_SPIDER = 3
 # EXTENSIONS = {'scrapy.contrib.resolver.CachingResolver': 0, }
 DOWNLOADER_MIDDLEWARES = {
     'scrapy.contrib.downloadermiddleware.useragent.UserAgentMiddleware': None,
-    # 'douban.userAgent.RandomUserAgentMiddleware': 2,  # 随机user-agent
-    # 'douban.pipelines.ProxyMiddleware': 3,  # 代理ip
+    'douban.userAgent.RandomUserAgentMiddleware': 2,  # 随机user-agent
+    'douban.pipelines.ProxyMiddleware': 3,  # 代理ip
 }
 # douban.spiders为目录, userAgent是文件
 
@@ -47,7 +47,12 @@ MONGODB_PORT = '27017'
 MONGODB_DATABASE = 'amazon'
 MONGODB_COLLECTION = 'movie'
 
-
+# 日志
+# LOG_ENABLED = True
+# LOG_ENCODING = 'utf-8'
+# LOG_FILE = '/home/adminuser/scrapy.log'
+# LOG_LEVEL = 'DEBUG'
+# LOG_STDOUT = True
 # scrapy 主要组件
 
 # scrapy engine， 控制整个爬虫的运行，请求调度，spider调用，下载调用，信号事件触发

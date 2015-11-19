@@ -4,6 +4,7 @@ import scrapy
 from douban.items import DoubanItem
 from scrapy.http import Request
 from bs4 import BeautifulSoup as bs  # 加载beautiful
+import time
 
 # pip install beautifulsoup4
 # import os
@@ -42,7 +43,6 @@ class doubanSpider(scrapy.spiders.Spider):
             response.body).get('encoding'))
         # print chardet.detect(response.body).get('encoding')
         # print soup
-        import time
         for y in soup.find_all('div', attrs={'class': 'doulist-item'}):
             item = DoubanItem()
             item['title'] = y.find('div', attrs={'class': 'title'}).a.text

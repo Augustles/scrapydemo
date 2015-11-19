@@ -14,7 +14,7 @@ class DoubanItem(scrapy.Item):
     url = scrapy.Field()
     title = scrapy.Field()
     price = scrapy.Field()
-    # define the fields for your item here like:
+
     # Item 对象是种简单的容器，保存了爬取到得数据
     # douban的items
     # title = scrapy.Field()

@@ -4,6 +4,8 @@ from scrapy.http import Request
 from douban.items import DoubanItem
 from bs4 import BeautifulSoup as bs
 import re
+from twisted.internet import reactor
+reactor.suggestThreadPoolSize(1)
 
 
 class AmazonSpider(scrapy.Spider):
@@ -20,30 +22,33 @@ class AmazonSpider(scrapy.Spider):
         # 自动识别编码
         soup = bs(response.body)
         all = soup.find('div', attrs={'id': re.compile(
-            r"\w+Results"), 'class': True}).find_all('li',attrs={'id':True})
+            r"\w+Results"), 'class': True}).find_all('li', attrs={'id': True})
         # .find_all(
         #     'li', attrs={'id': re.compile(r"result\_\d+"), 'data-asin': True, 'class': True})
         item = DoubanItem()
-        # page = response.url.split('pg_')[1][0]
-        # print page
-        for y in all:
-            print y.get('id')
-            # top = int(y.get('id').split('_')[-1]) + 1
-            # url = y.find('a').get('href')
-            # url = url[:url.find('ref=')]
-            # prices = y.find('span', attrs={
-            #                 'class': 'a-size-base a-color-price s-price a-text-bold'}).get_text()
-            # # print prices
-            # print top
+        try:
+            all = soup.find('div', attrs={'id': re.compile(
+                r"\w+Results"), 'class': True}).find_all('li')
+        except AttributeError:
+            pass
 
-            # print top, url
-            # item['top'] = top
-            # item['url'] = url
-            # yield Request(url=item['url'], meta={'item': item}, callback=self.parse_item)
-            # info = y.find(text=re.compile(r"id\=\"result\_\d+"))
-            # info = y.extract()
-            # info = info.find(text=re.compile(r"id\=\"result\_\d+"))
-            # print info
+        for y in all:
+            try:
+                top = int(y.get('id').split('_')[-1]) + 1
+                url = y.find('a').get('href')
+                prices = y.find('span', attrs={
+                    'class': 'a-size-base a-color-price s-price a-text-bold'}).get_text()
+            except Exception:
+                pass
+
+        print top, url, prices
+        item['top'] = top
+        item['url'] = url
+        # yield Request(url=item['url'], meta={'item': item}, callback=self.parse_item)
+        # info = y.find(text=re.compile(r"id\=\"result\_\d+"))
+        # info = y.extract()
+        # info = info.find(text=re.compile(r"id\=\"result\_\d+"))
+        # print info
 
     # def parse_item(self, response):
     #     item = response.meta['item']
