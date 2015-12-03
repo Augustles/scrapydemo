@@ -1,7 +1,7 @@
 # scrapy
 
 ####一些常见问题, 经验:
-0. 了解scrapy已经做过的功能, 优化等. . . 防止重复造轮子, 如, 去重, 编码检测, dns缓存, http长连接,gzip等等. 
+0. 了解scrapy已经做过的功能, 优化等. . . 防止重复造轮子, 如, 去重, 编码检测, useragent, 代理ip, mongodb, mysql存储, 下载件文件名称修改, 布隆过滤器 , dns缓存, http长连接,gzip等等. 
 1. JS相关. 
 这个是被问的最多的. 看具体情况解决. 可模拟相关js执行、绕过, 或直接调浏览器去访问. 自己用一个JS引擎+模拟一个浏览器环境难度太大了（参见V8的DEMO）. 
 调浏览器有很多方法. 难以细说, 关键字如下, selenium, phantomjs, casperjs, ghost, webkit, scrapyjs, splash. 一些细节如关掉CSS渲染, 图片加载等. 只有scrapyjs是完全异步的, 相对是速度最快的, scrapyjs将webkit的事件循环和twisted的事件循环合在一起了. 其他的方案要么阻塞, 要么用多进程. 简单的js需求（对效率要求不高）随意选, 最优方案是scrapyjs+定制webkit（去掉不需要的功能）. 调浏览器开页面是比较耗资源的（主要是cpu）

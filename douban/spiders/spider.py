@@ -16,6 +16,11 @@ import time
 # 2. scrapy parse --spider=MySpider -d 3 http://music.douban.com/chart
 # 3. from scrapy.shell import inspect_response inspect_response(response)
 # pip install pybloomfiltermmap 去重
+# scrapy crawl myspider -s LOG_FILE=scrapy.log s为settings
+# DNSCACHE_ENABLED 默认True
+# HttpCompressionMiddleware 该中间件提供了对压缩(gzip, deflate)数据的支持
+# DOWNLOAD_TIMEOU 下载器超时时间(秒)
+# RANDOMIZE_DOWNLOAD_DELAY 0.5~1.5爬取速率随机值
 
 
 class doubanSpider(scrapy.spiders.Spider):
