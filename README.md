@@ -28,4 +28,4 @@ mongodb, mongodb不满足某些功能时考虑hbase,参考http://blog.scrapinghu
 9. 爬虫监控
 scrapyd自带简单的监控, 不够的话用scrapy的webservice自己写, 暂无（13.10）现成的
 10. =. =想到再补充. 
-11. http://www.xgezhang.com/python_scrapy_redis_crawler.html
+11. scrapy-redis分布式 http://www.xgezhang.com/python_scrapy_redis_crawler.html
