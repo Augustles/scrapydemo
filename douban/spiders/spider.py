@@ -21,6 +21,23 @@ import time
 # HttpCompressionMiddleware 该中间件提供了对压缩(gzip, deflate)数据的支持
 # DOWNLOAD_TIMEOU 下载器超时时间(秒)
 # RANDOMIZE_DOWNLOAD_DELAY 0.5~1.5爬取速率随机值
+# phantomjs
+# from selenium import webdriver
+# driver = webdriver.PhantomJS()
+# driver.get('http://mnwg.net')
+# soup = bs(driver.page_source)
+# driver.quit()
+# from selenium.webdriver.common.desired_capabilities import DesiredCapabilities # userAgent修改
+# dcap = dict(DesiredCapabilities.PHANTOMJS)
+# dcap["phantomjs.page.settings.userAgent"] = (
+#     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.9; rv:25.0) Gecko/20100101 Firefox/25.0 "
+# )
+# driver = webdriver.PhantomJS(desired_capabilities=dcap)
+# driver.desired_capabilities
+
+# 提取链接
+from scrapy.contrib.spiders import CrawlSpider, Rule
+from scrapy.linkextractors import LinkExtractor
 
 
 class doubanSpider(scrapy.spiders.Spider):
@@ -32,6 +49,7 @@ class doubanSpider(scrapy.spiders.Spider):
         start_urls.append(
             'http://www.douban.com/doulist/38849533/?start={0}&sort=seq&sub_type='.format(y))
 
+    # rules = (RuleLinkExtractor)
     def parse(self, response):  # 解析返回的URL数据
         # 下载直接整理的图片
         # with open(pre+'/pic_links.txt','r') as f:

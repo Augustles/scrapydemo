@@ -97,8 +97,8 @@ if __name__ == '__main__':
     st = time.time()
     # save_ips(get_cn_proxy_list())
     # save_ips(get_kuaidaili_list())
-    # save_ips(get_haodaili_guonei_list())
-    save_ips(get_haodaili_guowai_list())
+    save_ips(get_haodaili_guonei_list())
+    # save_ips(get_haodaili_guowai_list())
     end = time.time()
     with open('ip.txt', 'r') as r:
         n = r.readlines()

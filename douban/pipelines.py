@@ -111,8 +111,9 @@ class MongoDBPipeline(object):
         if err_msg:
             raise DropItem(err_msg)
         self.collection.insert(dict(item))  # , upsert=True, safe=True
-        # log.msg('Item written to MongoDB database %s/%s' % (self.db, self.col),
-        #         level=log.DEBUG, spider=spider)
+        item['topicurl'] = str(result)
+        log.msg('Item %s written to MongoDB database %s/%s' % (result, self.db, self.col),
+                level=log.DEBUG, spider=spider)
         return item
 
 
