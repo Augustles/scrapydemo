@@ -56,6 +56,20 @@ class SeenURLFilter(RFPDupeFilter):
         if self.file:
             self.file.write(fp + os.linesep)
 
+# mongo已经爬去'out'字段为1
+class CustomFilter(RFPDupeFilter):
+
+    def __init__(self, path=None, other=None):
+        inmem = [it['url'] for it in MongoClient(settings['DBINFO']).nbbs.dsl.find({'out': 1})]
+        self.already_seen = set(inmem)
+        RFPDupeFilter.__init__(self, path, other)
+
+    def request_seen(self, request):
+        if request.url in self.already_seen:
+            return True
+        else:
+            pass
+
 # import base64
 import random
 # Start your middleware class
