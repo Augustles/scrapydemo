@@ -74,7 +74,28 @@ class CustomFilter(RFPDupeFilter):
 import random
 # Start your middleware class
 
+# 布隆过滤, 对千万级别url有显著效果
+from pybloom import BloomFilter
 
+class BLOOMDupeFilter(BaseDupeFilter):
+    def __init__(self, path=None):
+        self.file = None
+        self.fingerprints = BloomFilter(capacity=1000000, error_rate=0.001)
+
+    @classmethod
+    def from_settings(cls, settings):
+        return cls(job_dir(settings))
+
+    def request_seen(self, request):
+        fp = request.url
+        if fp in self.fingerprints:
+            return True
+        self.fingerprints.add(fp)
+        return False
+
+    def close(self, reason):
+        self.fingerprints = None
+        
 # 代理组件
 class ProxyMiddleware(object):
     # overwrite process request
