@@ -29,4 +29,4 @@ mongodb, mongodb不满足某些功能时考虑hbase,参考http://blog.scrapinghu
 scrapyd自带简单的监控, 不够的话用scrapy的webservice自己写, 暂无（13.10）现成的
 10. =. =想到再补充. 
 11. scrapy-redis分布式 http://www.xgezhang.com/python_scrapy_redis_crawler.html
-12. 爬虫防止被ban可以,延迟下载,修改user-agent,禁用cookies,代理ip
+12. 爬虫防止被ban可以,设置延迟下载,设置user-agent,禁用cookies,代理ip
