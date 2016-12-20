@@ -8,7 +8,7 @@ import urllib
 import hashlib
 from bs4 import BeautifulSoup as bs
 import re
-from manyue.items import ManyueItem
+# from manyue.items import ManyueItem
 # from fabric.colors import green, red
 # from cchardet import detect
 
@@ -33,7 +33,7 @@ class Gzggzy(SpiderBase):
     def start_requests(self):
         for x in xrange(1,520):
             url = 'http://www.gzggzy.cn/cms/wz/view/index/layout2/zfcglist.jsp?page=%s&siteId=1&channelId=456' %x
-            yield scrapy.Request(url, callback=self.parse_list)
+            # yield scrapy.Request(url, callback=self.parse_list)
 
     def parse_list(self, response):
         soup = bs(response.body, 'lxml')

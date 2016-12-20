@@ -18,7 +18,7 @@ NEWSPIDER_MODULE = 'douban.spiders'
 ITEM_PIPELINES = {
     # 'douban.pipelines.DoubanPipeline': 500,
     # 'douban.pipelines.MySQLStorePipeline': 2, # mysql
-    'douban.pipelines.MongoDBPipeline': 501,  # mongo
+    # 'douban.pipelines.MongoDBPipeline': 501,  # mongo
     # 'scrapy.contrib.pipeline.images.ImagesPipeline': 1, # 默认image的pipe
     # 'douban.pipelines.DuplicatesPipeline': 502,
 }
@@ -35,7 +35,7 @@ CONCURRENT_REQUESTS_PER_SPIDER = 3
 DOWNLOADER_MIDDLEWARES = {
     'scrapy.contrib.downloadermiddleware.useragent.UserAgentMiddleware': None,
     'douban.userAgent.RandomUserAgentMiddleware': 2,  # 随机user-agent
-    'douban.pipelines.ProxyMiddleware': 3,  # 代理ip
+    # 'douban.pipelines.ProxyMiddleware': 3,  # 代理ip
 }
 # douban.spiders为目录, userAgent是文件
 
