@@ -37,7 +37,7 @@ def check(run_in_local=False):
     return wrap
 
 @check()
-def bus_crawl(crawl_source, province_id = None, crawl_kwargs={}):
+def crawl(crawl_source, crawl_kwargs={}):
     url_list = ['http://127.0.0.1:6800/schedule.json']
     data = {
           "project": "douban",
@@ -47,6 +47,7 @@ def bus_crawl(crawl_source, province_id = None, crawl_kwargs={}):
 
     for url in url_list:
         res = requests.post(url, data=data)
+        proxy_log.info('srapyd return %s' %res)
 
 @check(run_in_local=False)
 def crawl_proxy_haodaili():
@@ -84,13 +85,12 @@ def check_consumer_proxy(name):
 def main():
     sched = Scheduler(daemonic=False)
 
-    # sched.add_cron_job(bus_crawl, hour=2, minute=10, args=['bus365'], kwargs={"crawl_kwargs":{"city": "赤峰市,巴林左旗,巴林右旗,通辽市,海拉尔,正蓝旗,集宁区"}})
-    # # 河南
+    sched.add_cron_job(crawl, minute=1, args=['jianshu'])
     # sched.add_cron_job(bus_crawl, hour=17, minute=0, args=['hn96520'])
 
     # 代理ip相关
-    sched.add_interval_job(crawl_proxy_haodaili, minutes=3)
-    sched.add_interval_job(crawl_proxy_kxdaili, minutes=5)
+    # sched.add_interval_job(crawl_proxy_haodaili, minutes=3)
+    # sched.add_interval_job(crawl_proxy_kxdaili, minutes=5)
     # sched.add_interval_job(crawl_proxy_ip181, minutes=1)
     # sched.add_interval_job(crawl_proxy_samair, minutes=1)
     # sched.add_interval_job(crawl_proxy_66ip, minutes=1)
