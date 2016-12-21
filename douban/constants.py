@@ -13,19 +13,19 @@ import logging
 # from logging.handlers import SysLogHandler
 from logging import Formatter, StreamHandler, FileHandler
 
-proxy_log = logging.getLogger("proxy")
-
-s = proxy_log.name
-f = "logs/%s.log" % s
-file_hd = FileHandler(os.path.join(os.getcwd(), f))
-stdout_fhd = StreamHandler()
+# logging模块输出格式
 fmt = Formatter('[%(asctime)s] %(levelname)s: %(message)s')
-stdout_fhd.setLevel(logging.INFO)
-stdout_fhd.setFormatter(fmt)
-file_hd.setLevel(logging.INFO)
-file_hd.setFormatter(fmt)
-proxy_log.addHandler(stdout_fhd)
-proxy_log.addHandler(file_hd)
+proxy_log = logging.getLogger('proxy')
+# 输出到文件
+fhd = logging.FileHandler('logs/proxy.log')
+fhd.setFormatter(fmt)
+proxy_log.addHandler(fhd)
+proxy_log.setLevel(logging.INFO)
+# 输出到控制台
+stdout_hd = logging.StreamHandler()
+stdout_hd.setFormatter(fmt)
+proxy_log.addHandler(stdout_hd)
+proxy_log.setLevel(logging.INFO)
 
 # redis
 REDIS_SERVER_INFO = {'host': '127.0.0.1', 'port': 6379, 'db': '0', 'password': 'nana'}

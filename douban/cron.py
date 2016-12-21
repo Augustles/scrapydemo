@@ -36,7 +36,7 @@ def check(run_in_local=False):
         return sub_wrap
     return wrap
 
-@check()
+@check(run_in_local=False)
 def crawl(crawl_source, crawl_kwargs={}):
     url_list = ['http://127.0.0.1:6800/schedule.json']
     data = {
@@ -47,7 +47,7 @@ def crawl(crawl_source, crawl_kwargs={}):
 
     for url in url_list:
         res = requests.post(url, data=data)
-        proxy_log.info('srapyd return %s' %res)
+        proxy_log.info('srapyd return %s' %res.json())
 
 @check(run_in_local=False)
 def crawl_proxy_haodaili():
@@ -85,9 +85,9 @@ def check_consumer_proxy(name):
 def main():
     sched = Scheduler(daemonic=False)
 
-    sched.add_cron_job(crawl, minute=1, args=['jianshu'])
     # sched.add_cron_job(bus_crawl, hour=17, minute=0, args=['hn96520'])
 
+    sched.add_interval_job(crawl, minutes=30, args=['jianshu'])
     # 代理ip相关
     # sched.add_interval_job(crawl_proxy_haodaili, minutes=3)
     # sched.add_interval_job(crawl_proxy_kxdaili, minutes=5)
@@ -113,4 +113,5 @@ def main():
     sched.start()
 
 if __name__ == '__main__':
+    proxy_log.info('start cron job ...')
     main()
