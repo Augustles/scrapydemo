@@ -17,6 +17,8 @@ import requests
 
 class Jianshu(scrapy.Spider):
     name = "jianshu"
+    allowed_domains = []
+    start_urls = []
     custom_settings = {
         "ITEM_PIPELINES": {
             'douban.pipeline.MongoDBPipeline': 300,
