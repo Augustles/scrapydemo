@@ -27,9 +27,9 @@ class Jianshu(scrapy.Spider):
 
     def start_requests(self):
         url = 'http://www.jianshu.com/'
-        yield scrapy.Request(url, callback=self.parse_list)
+        yield scrapy.Request(url, callback=self.parse)
 
-    def parse_list(self, response):
+    def parse(self, response):
         soup = bs(response.body, 'lxml')
         qs = soup.find('ul', attrs={'class': 'article-list thumbnails'}).find_all('li')
         for x in qs:

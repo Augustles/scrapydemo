@@ -36,6 +36,18 @@ def check(run_in_local=False):
         return sub_wrap
     return wrap
 
+@check()
+def bus_crawl(crawl_source, province_id = None, crawl_kwargs={}):
+    url_list = ['http://127.0.0.1:6800/schedule.json']
+    data = {
+          "project": "douban",
+          "spider": crawl_source,
+    }
+    data.update(crawl_kwargs)
+
+    for url in url_list:
+        res = requests.post(url, data=data)
+
 @check(run_in_local=False)
 def crawl_proxy_haodaili():
     from proxy import proxy_producer
