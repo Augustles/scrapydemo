@@ -1,4 +1,5 @@
 # Ignore files
+*.pid
 *.zip
 *.png
 *.gif
