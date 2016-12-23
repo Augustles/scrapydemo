@@ -29,7 +29,10 @@ def check(run_in_local=False):
                 res = func(*args, **kwargs)
                 cost = time.time() - t1
                 # cron_log.info("[succss] %s %s %s, return: %s, cost time: %s", func.__name__, args, kwargs, res, cost)
-                proxy_log.info("[succss] %s %s %s, return: , cost time: %s", func.__name__, args, kwargs, cost)
+                if res:
+                    proxy_log.info("[succss] %s %s %s, return: %s, cost time: %s", func.__name__, args, kwargs, res, cost)
+                else:
+                    proxy_log.info("[succss] %s %s %s, return: , cost time: %s", func.__name__, args, kwargs, cost)
             except:
                 proxy_log.error("%s,%s,%s", traceback.format_exc(), args, kwargs)
             return res
@@ -87,9 +90,9 @@ def main():
 
     # sched.add_cron_job(bus_crawl, hour=17, minute=0, args=['hn96520'])
 
-    sched.add_interval_job(crawl, minutes=30, args=['jianshu'])
+    # sched.add_interval_job(crawl, minutes=30, args=['jianshu'])
     # 代理ip相关
-    # sched.add_interval_job(crawl_proxy_haodaili, minutes=3)
+    sched.add_interval_job(crawl_proxy_haodaili, minutes=1)
     # sched.add_interval_job(crawl_proxy_kxdaili, minutes=5)
     # sched.add_interval_job(crawl_proxy_ip181, minutes=1)
     # sched.add_interval_job(crawl_proxy_samair, minutes=1)

@@ -34,12 +34,12 @@ class Jianshu(scrapy.Spider):
     def parse(self, response):
         soup = bs(response.body, 'lxml')
         qs = soup.find('ul', attrs={'class': 'article-list thumbnails'}).find_all('li')
+        self.logger.info('[scrapy] crawl %s items' %(len(qs)))
         for x in qs:
             try:
                 title = x.h4.text
                 url = 'http://www.jianshu.com' + x.h4.a['href']
                 author = x.find('a', attrs={'class': 'author-name blue-link'}).text
-                print title, author, url
                 attrs = dict(
                         title=title,
                         url=url,
