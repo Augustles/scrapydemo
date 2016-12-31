@@ -3,6 +3,7 @@
 import pymongo
 from scrapy.exceptions import DropItem
 from utils import md5
+from datetime import datetime as dte
 
 
 class MongoDBPipeline(object):
@@ -25,6 +26,8 @@ class MongoDBPipeline(object):
             spider.logger.error(err)
             return
         data = dict(item)
+        data['update_datetime'] = dte.now()
+        data['create_datetime'] = dte.now()
         link_id = md5('%(title)s-%(url)s' %data)
         print link_id
         data['link_id'] = link_id

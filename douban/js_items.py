@@ -10,6 +10,9 @@ class Jsitem(scrapy.Item):
     title = scrapy.Field()
     author = scrapy.Field()
     content = scrapy.Field()
+    source = scrapy.Field()
+    create_datetime = scrapy.Field()
+    update_datetime = scrapy.Field()
 
     def valid(self):
         # 必须有值的属性

@@ -2,18 +2,12 @@
 # encoding: utf-8
 
 import scrapy
-import json
-import datetime
-import urllib
-import hashlib
 from bs4 import BeautifulSoup as bs
 import re
 from douban.js_items import Jsitem
 from datetime import datetime as dte
 from scrapy.conf import settings
-import scrapy
 import requests
-
 
 class One(scrapy.Spider):
     name = 'one'
@@ -66,6 +60,7 @@ class One(scrapy.Spider):
                         title=title,
                         url=url,
                         author=author,
+                        source='one',
                         )
                 yield scrapy.Request(url, meta={'attrs': attrs}, callback=self.parse_content)
             except:
@@ -77,10 +72,3 @@ class One(scrapy.Spider):
         content = soup.find('div', attrs={'class': 'text-content'}).text
         attrs.update(content=content)
         yield Jsitem(**attrs)
-
-
-    def get_md5(self, msg):
-        md5 = hashlib.md5(msg.encode('utf-8')).hexdigest()
-        return md5
-
-
