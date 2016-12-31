@@ -2,6 +2,7 @@
 
 import pymongo
 from scrapy.exceptions import DropItem
+from utils import md5
 
 
 class MongoDBPipeline(object):
@@ -11,17 +12,24 @@ class MongoDBPipeline(object):
         self.port = 27017
         self.db = 'web'
         self.col = 'jianshu'
-        connection = pymongo.MongoClient(self.server, self.port)
-        db = connection[self.db]
+        self.client = pymongo.MongoClient(self.server, self.port)
+        db = self.client[self.db]
         self.collection = db[self.col]
 
+    def close_spider(self, spider):
+        self.client.close()
+
     def process_item(self, item, spider):
-        err_msg = ''
-        for field, data in item.items():
-            if not data:
-                pass
-                # err_msg += 'Missing %s of poem from %sn' % (field, item['url'])
-        if err_msg:
-            raise DropItem(err_msg)
-        self.collection.insert(dict(item))  # , upsert=True, safe=True
+        err = item.valid()
+        if err:
+            spider.logger.error(err)
+            return
+        data = dict(item)
+        link_id = md5('%(title)s-%(url)s' %data)
+        print link_id
+        data['link_id'] = link_id
+        pk = {
+            'link_id': link_id
+        }
+        self.collection.replace_one(pk, data, upsert=True)
 

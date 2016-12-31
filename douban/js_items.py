@@ -11,4 +11,15 @@ class Jsitem(scrapy.Item):
     author = scrapy.Field()
     content = scrapy.Field()
 
+    def valid(self):
+        # 必须有值的属性
+        required_attrs = [
+            'title',
+            'url',
+        ]
+        for attr in required_attrs:
+            if not self[attr]:
+                return "%s required" % attr
+        return ""
+
 
