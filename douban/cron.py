@@ -90,7 +90,8 @@ def main():
 
     # sched.add_cron_job(bus_crawl, hour=17, minute=0, args=['hn96520'])
 
-    sched.add_interval_job(crawl, minutes=10, args=['jianshu'])
+    sched.add_interval_job(crawl, minutes=60, args=['jianshu'])
+    sched.add_interval_job(crawl, hour=1, args=['one'])
     # 代理ip相关
     # sched.add_interval_job(crawl_proxy_haodaili, minutes=1)
     # sched.add_interval_job(crawl_proxy_kxdaili, minutes=5)
