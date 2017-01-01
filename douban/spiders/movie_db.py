@@ -70,13 +70,16 @@ class Movie_db(scrapy.Spider):
 
     def parse(self, response):
         soup = bs(response.body, 'lxml')
-        title = soup.find('h1').text
-        rate = soup.find('strong', attrs={'class': 'll rating_num'}).text
-        url = response.url
-        attrs = dict(
-            title=title,
-            url=url,
-            author=rate,
-            source='movie_db'
-        )
-        yield Jsitem(**attrs)
+        try:
+            title = soup.find('h1').text
+            rate = soup.find('strong', attrs={'class': 'll rating_num'}).text
+            url = response.url
+            attrs = dict(
+                title=title,
+                url=url,
+                author=rate,
+                source='movie_db'
+            )
+            yield Jsitem(**attrs)
+        except Exception as e:
+            self.logger.info('[scrapy] movie error %s items' %(e))
