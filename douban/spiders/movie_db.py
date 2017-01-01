@@ -67,15 +67,17 @@ class Movie_db(scrapy.Spider):
         urls = set()
         r = requests.get(url)
         soup = bs(r.content, 'lxml')
-        info = soup.find('div', attrs={'class': 'article'}).find_all('a')
+        info = soup.find_all('a')
         for x in info:
-            url = 'https://movie.douban.com' + x.get('href', '')
-            print url
-            ret = self.from_doulist_list(url)
-            urls = urls.union(ret)
-
+            if 'tag' in x.get('href', ''):
+                try:
+                    url = 'https://movie.douban.com' + x.get('href', '')
+                    print url
+                    ret = self.from_doulist_list(url)
+                    urls = urls.union(ret)
+                except:
+                    pass
         return urls
-
 
     def start_requests(self):
         # url = 'https://movie.douban.com/tag/1890s'
