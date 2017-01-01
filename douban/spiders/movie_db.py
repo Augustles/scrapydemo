@@ -30,6 +30,7 @@ class Movie_db(scrapy.Spider):
     def from_doulist_list(self, url):
         r = requests.get(url)
         soup = bs(r.content, 'lxml')
+        print r.url
         page = soup.find('div', attrs={'class': 'paginator'}).find_all('a')[-2]
         ret = set()
         try:
@@ -38,11 +39,12 @@ class Movie_db(scrapy.Spider):
             page = 0
         for x in xrange(page):
             tmp = '%s?start=%s&sort=seq&sub_type=' %(url, x*25)
+            print tmp
             urls = self.from_doulist(tmp)
             ret = ret.union(urls)
         return ret
 
-    def get_subject(self, url):
+    def get_subject1(self, url):
         urls = set()
         r = requests.get(url)
         soup = bs(r.content, 'lxml')
@@ -51,20 +53,36 @@ class Movie_db(scrapy.Spider):
             url = x.get('href', '')
             if 'subject' in url:
                 urls.add(url)
+            elif url == 'https://movie.douban.com/tag/':
+                pass
             elif 'doulist' in url or 'tag' in url:
-                doulist = self.from_doulist(url)
+                print url
+                doulist = self.from_doulist_list(url)
                 urls = urls.union(doulist)
             else:
-                print url
+                pass
+        return urls
+
+    def get_subject(self, url):
+        urls = set()
+        r = requests.get(url)
+        soup = bs(r.content, 'lxml')
+        info = soup.find('div', attrs={'class': 'article'}).find_all('a')
+        for x in info:
+            url = 'https://movie.douban.com' + x.get('href', '')
+            print url
+            ret = self.from_doulist_list(url)
+            urls = urls.union(ret)
+
         return urls
 
 
     def start_requests(self):
         # url = 'https://movie.douban.com/tag/1890s'
         # urls = self.from_doulist_list(url)
-        # print len(urls)
-        start = 'https://movie.douban.com/'
+        start = 'https://movie.douban.com/tag/'
         urls = self.get_subject(start)
+        print len(urls)
         for url in urls:
             yield scrapy.Request(url, callback=self.parse)
 
