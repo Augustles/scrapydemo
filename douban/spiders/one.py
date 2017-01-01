@@ -27,20 +27,26 @@ class One(scrapy.Spider):
             r = requests.get(url)
             soup = bs(r.content, 'lxml')
             ret = soup.find('div', attrs={'class': 'list-footer'}).find_all('td')
-            if len(ret) < 3:
+            # if len(ret) < 3:
+                # break
+            try:
+                flag = 'http://m.wufazhuce.com/article?page=' + ret[5].find('a', attrs={'class': 'current'}).text
+                print flag, url
+            except:
+                flag = ''
+            if flag:
                 break
             for x in ret:
                 text = x.a.text
                 if re.match(r'\d+', text):
                     url = 'http://m.wufazhuce.com/article?page=%s' %(re.match(r'\d+', text).group(0))
-                    print url
                     urls.add(url)
 
         return urls
 
 
     def start_requests(self):
-        url = 'http://m.wufazhuce.com/article?page=1'
+        url = 'http://m.wufazhuce.com/article?page=0'
         # yield scrapy.Request(url, callback=self.parse)
         urls = self.get_urls(url)
         for url in urls:

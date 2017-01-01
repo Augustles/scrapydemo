@@ -30,3 +30,9 @@ scrapyd自带简单的监控, 不够的话用scrapy的webservice自己写, 暂�
 10. =. =想到再补充. 
 11. scrapy-redis分布式 http://www.xgezhang.com/python_scrapy_redis_crawler.html
 12. 爬虫防止被ban可以,设置延迟下载,设置user-agent,禁用cookies,代理ip
+13. Scrapy原理, scrpy Engine(引擎)用来控制整个系统的数据处理流程,
+Scheduler(调度器)从scrapy engine接受request排序并列入队列
+Downloader抓去网页, 并把response返回spider
+Spider定制爬虫爬取的规则
+Item Pipeline(项目管道)用来处理从网页抽取的项目
+
