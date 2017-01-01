@@ -38,7 +38,7 @@ class Movie_db(scrapy.Spider):
         except:
             page = 0
         for x in xrange(page):
-            tmp = '%s?start=%s&sort=seq&sub_type=' %(url, x*25)
+            tmp = '%s?start=%s&sort=seq&sub_type=' %(url, x*20)
             print tmp
             urls = self.from_doulist(tmp)
             ret = ret.union(urls)
@@ -82,8 +82,9 @@ class Movie_db(scrapy.Spider):
     def start_requests(self):
         # url = 'https://movie.douban.com/tag/1890s'
         # urls = self.from_doulist_list(url)
-        start = 'https://movie.douban.com/tag/'
-        urls = self.get_subject(start)
+        # start = 'https://movie.douban.com/tag/'
+        start = 'https://movie.douban.com/tag/%E6%97%A5%E6%9C%AC/'
+        urls = self.from_doulist_list(start)
         print len(urls)
         for url in urls:
             yield scrapy.Request(url, callback=self.parse)
