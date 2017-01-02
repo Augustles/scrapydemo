@@ -6,17 +6,20 @@ import hashlib
 from bs4 import BeautifulSoup as bs
 from douban.js_items import Jsitem
 from scrapy.conf import settings
-from douban.utils import md5, is_url
+from douban.utils import md5, is_url, gen_bids
+from random import choice
 import requests
+from douban.proxy import get_redis
 
 
 class Movie_db(scrapy.Spider):
     name = 'movie_db'
-    allowed_domains = []
-    start_urls = []
+    headers = {
+        'User-Agent': 'Baiduspider',
+    }
     custom_settings = {
         "ITEM_PIPELINES": {
-            'douban.pipeline.MongoDBPipeline': 300,
+            'douban.pipeline.MongoDBPipeline': 1,
         },
         'DOWNLOADER_MIDDLEWARES': {
             'douban.userAgent.DoubanHeader': 2,
@@ -24,20 +27,31 @@ class Movie_db(scrapy.Spider):
         'DOWNLOAD_DELAY': 0.15,
         # "RANDOMIZE_DOWNLOAD_DELAY": True,
     }
+
     def from_doulist(self, url):
         try:
-            r = requests.get(url)
+            headers = {
+                'User-Agent': 'Baiduspider',
+            }
+            cookies = {
+                'bid': choice(gen_bids()),
+            }
+            r = requests.get(url, headers=headers, cookies=cookies)
             soup = bs(r.content, 'lxml')
             doulist = set([x.get('href', '') for x  in soup.find_all('a') if 'subject' in x.get('href', '')])
             return doulist
         except Exception as e:
             self.logger.info('[scrapy] movie error %s items' %(e))
 
-
-
     def from_doulist_list(self, url):
         try:
-            r = requests.get(url)
+            headers = {
+                'User-Agent': 'Baiduspider',
+            }
+            cookies = {
+                'bid': choice(gen_bids()),
+            }
+            r = requests.get(url, headers=headers, cookies=cookies)
             soup = bs(r.content, 'lxml')
             print r.url
             pre = soup.find('div', attrs={'class': 'paginator'}).find_all('a')[-2]
@@ -61,8 +75,16 @@ class Movie_db(scrapy.Spider):
 
     def get_subject(self, url):
         urls = set()
-        r = requests.get(url)
+        headers = {
+            'User-Agent': 'Baiduspider',
+        }
+        cookies = {
+            'bid': choice(gen_bids()),
+        }
+        print cookies
+        r = requests.get(url, headers=headers, cookies=cookies)
         soup = bs(r.content, 'lxml')
+        print soup
         info = soup.find_all('a')
         for x in info:
             if 'tag' in x.get('href', ''):
@@ -73,15 +95,20 @@ class Movie_db(scrapy.Spider):
                     urls = urls.union(ret)
                 except:
                     pass
+
+        rds = get_redis('default')
+        for x in urls:
+            ret = rds.sadd('movie:douban:crawl', x)
         return urls
 
     def start_requests(self):
         # url = 'https://movie.douban.com/tag/1890s'
         # urls = self.from_doulist_list(url)
-        # start = 'https://movie.douban.com/tag/'
-        start = 'https://movie.douban.com/tag/%E6%97%A5%E6%9C%AC/'
-        urls = self.from_doulist_list(start)
-        print len(urls)
+        start = 'https://movie.douban.com/tag/'
+        urls = self.get_subject(start)
+        # start = 'https://movie.douban.com/tag/%E6%97%A5%E6%9C%AC/'
+        # urls = self.from_doulist_list(start)
+        # print len(urls)
         for url in urls:
             yield scrapy.Request(url, callback=self.parse)
 
