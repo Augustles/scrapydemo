@@ -14,10 +14,13 @@ class Jianshu(scrapy.Spider):
     start_urls = []
     custom_settings = {
         "ITEM_PIPELINES": {
-            'douban.pipeline.MongoDBPipeline': 300,
+            'douban.pipeline.MongoDBPipeline': 1,
         },
         # "DOWNLOAD_DELAY": 0.15,
         "RANDOMIZE_DOWNLOAD_DELAY": True,
+        'DOWNLOADER_MIDDLEWARES': {
+            'douban.userAgent.JianshuHeader': 2,
+        },
     }
 
     def start_requests(self):

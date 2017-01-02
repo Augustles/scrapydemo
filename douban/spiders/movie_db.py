@@ -18,8 +18,11 @@ class Movie_db(scrapy.Spider):
         "ITEM_PIPELINES": {
             'douban.pipeline.MongoDBPipeline': 300,
         },
-        # 'DOWNLOAD_DELAY': 0.75,
-        "RANDOMIZE_DOWNLOAD_DELAY": True,
+        'DOWNLOADER_MIDDLEWARES': {
+            'douban.userAgent.DoubanHeader': 2,
+        },
+        'DOWNLOAD_DELAY': 0.15,
+        # "RANDOMIZE_DOWNLOAD_DELAY": True,
     }
     def from_doulist(self, url):
         try:
@@ -55,24 +58,6 @@ class Movie_db(scrapy.Spider):
         except Exception as e:
             self.logger.info('[scrapy] movie error %s items' %(e))
 
-    def get_subject1(self, url):
-        urls = set()
-        r = requests.get(url)
-        soup = bs(r.content, 'lxml')
-        info = soup.find_all('a')
-        for x in info:
-            url = x.get('href', '')
-            if 'subject' in url:
-                urls.add(url)
-            elif url == 'https://movie.douban.com/tag/':
-                pass
-            elif 'doulist' in url or 'tag' in url:
-                print url
-                doulist = self.from_doulist_list(url)
-                urls = urls.union(doulist)
-            else:
-                pass
-        return urls
 
     def get_subject(self, url):
         urls = set()

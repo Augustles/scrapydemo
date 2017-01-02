@@ -17,6 +17,9 @@ class One(scrapy.Spider):
         "ITEM_PIPELINES": {
             'douban.pipeline.MongoDBPipeline': 300,
         },
+        'DOWNLOADER_MIDDLEWARES': {
+            'douban.userAgent.JianshuHeader': 2,
+        },
         'DOWNLOAD_DELAY': 1.75,
         # "RANDOMIZE_DOWNLOAD_DELAY": True,
     }

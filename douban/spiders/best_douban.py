@@ -7,17 +7,20 @@ from bs4 import BeautifulSoup as bs
 from douban.js_items import Jsitem
 from scrapy.conf import settings
 from douban.utils import md5
-
+import time
 
 class BestDb(scrapy.Spider):
     name = 'best_db'
-    allowed_domains = []
-    start_urls = []
     custom_settings = {
         "ITEM_PIPELINES": {
-            'douban.pipeline.MongoDBPipeline': 300,
+            'douban.pipeline.MongoDBPipeline': 1,
         },
         'DOWNLOAD_DELAY': 0.75,
+        # 'LOG_FILE': 'logs/%s_best_db.log' % time.strftime('%d-%m-%Y'),
+        # 'LOG_FORMAT': '%(levelname)s %(asctime)s [%(name)s:%(module)s:%(funcName)s:%(lineno)s] [%(exc_info)s] %(message)s',
+        'DOWNLOADER_MIDDLEWARES': {
+            'douban.userAgent.DoubanHeader': 2,
+        },
         # "RANDOMIZE_DOWNLOAD_DELAY": True,
     }
 
@@ -25,7 +28,6 @@ class BestDb(scrapy.Spider):
     def start_requests(self):
         for x in xrange(0, 101, 20):
             url = 'https://movie.douban.com/review/best/?start=%s' %x
-            print url
             yield scrapy.Request(url, callback=self.parse)
 
     def parse(self, response):
@@ -52,10 +54,3 @@ class BestDb(scrapy.Spider):
         content = soup.find('div', attrs={'id': 'link-report'}).text
         attrs.update(author=author, content=content)
         yield Jsitem(**attrs)
-
-
-    def get_md5(self, msg):
-        md5 = hashlib.md5(msg.encode('utf-8')).hexdigest()
-        return md5
-
-

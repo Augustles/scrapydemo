@@ -17,6 +17,9 @@ class Daily_zhihu(scrapy.Spider):
         "ITEM_PIPELINES": {
             'douban.pipeline.MongoDBPipeline': 300,
         },
+        'DOWNLOADER_MIDDLEWARES': {
+            'douban.userAgent.JianshuHeader': 2,
+        },
         'DOWNLOAD_DELAY': 0.75,
         # "RANDOMIZE_DOWNLOAD_DELAY": True,
     }
