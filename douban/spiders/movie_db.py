@@ -6,7 +6,7 @@ import hashlib
 from bs4 import BeautifulSoup as bs
 from douban.js_items import Jsitem
 from scrapy.conf import settings
-from douban.utils import md5
+from douban.utils import md5, is_url
 import requests
 
 
@@ -22,27 +22,38 @@ class Movie_db(scrapy.Spider):
         "RANDOMIZE_DOWNLOAD_DELAY": True,
     }
     def from_doulist(self, url):
-        r = requests.get(url)
-        soup = bs(r.content, 'lxml')
-        doulist = set([x.get('href', '') for x  in soup.find_all('a') if 'subject' in x.get('href', '')])
-        return doulist
+        try:
+            r = requests.get(url)
+            soup = bs(r.content, 'lxml')
+            doulist = set([x.get('href', '') for x  in soup.find_all('a') if 'subject' in x.get('href', '')])
+            return doulist
+        except Exception as e:
+            self.logger.info('[scrapy] movie error %s items' %(e))
+
+
 
     def from_doulist_list(self, url):
-        r = requests.get(url)
-        soup = bs(r.content, 'lxml')
-        print r.url
-        page = soup.find('div', attrs={'class': 'paginator'}).find_all('a')[-2]
-        ret = set()
         try:
-            page = int(page.text)
-        except:
-            page = 0
-        for x in xrange(page):
-            tmp = '%s?start=%s&sort=seq&sub_type=' %(url, x*20)
-            print tmp
-            urls = self.from_doulist(tmp)
-            ret = ret.union(urls)
-        return ret
+            r = requests.get(url)
+            soup = bs(r.content, 'lxml')
+            print r.url
+            pre = soup.find('div', attrs={'class': 'paginator'}).find_all('a')[-2]
+            ret = set()
+            try:
+                start = int(pre.get('href', '',).split('?')[-1].split('&')[0].split('=')[1])
+                page = int(pre.text)
+                n = start/(page-1)
+            except:
+                page = 0
+                n = 0
+            for x in xrange(page-1):
+                tmp = '%s?start=%s&sort=seq&sub_type=' %(url, x*n)
+                print tmp
+                urls = self.from_doulist(tmp)
+                ret = ret.union(urls)
+            return ret
+        except Exception as e:
+            self.logger.info('[scrapy] movie error %s items' %(e))
 
     def get_subject1(self, url):
         urls = set()
