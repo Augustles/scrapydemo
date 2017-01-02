@@ -97,14 +97,20 @@ class Movie_db(scrapy.Spider):
                     pass
 
         rds = get_redis('default')
-        for x in urls:
-            ret = rds.sadd('movie:douban:crawl', x)
+        try:
+            ret = rds.smembers('movie:douban:crawl')
+            urls = urls - ret
+            for x in urls:
+                ret = rds.sadd('movie:douban:crawl', x)
+        except:
+            pass
         return urls
 
     def start_requests(self):
         # url = 'https://movie.douban.com/tag/1890s'
         # urls = self.from_doulist_list(url)
-        start = 'https://movie.douban.com/tag/'
+        # start = 'https://movie.douban.com/tag/'
+        start = 'https://movie.douban.com/tag/?view=cloud'
         urls = self.get_subject(start)
         # start = 'https://movie.douban.com/tag/%E6%97%A5%E6%9C%AC/'
         # urls = self.from_doulist_list(start)
