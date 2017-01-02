@@ -52,7 +52,7 @@ class Jianshu(scrapy.Spider):
             return users
 
         for x in range(1, n+1):
-            tmp = 'http://www.jianshu.com/' + url %x
+            tmp = 'http://www.jianshu.com' + url %x
             ret = self.get_user(tmp)
             users = users.union(ret)
         return users
