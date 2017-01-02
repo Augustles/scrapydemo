@@ -9,6 +9,7 @@ from scrapy.conf import settings
 from douban.utils import md5
 import requests
 from time import sleep
+from douban.proxy import get_redis
 
 class Jianshu(scrapy.Spider):
     name = "jianshu"
@@ -31,6 +32,7 @@ class Jianshu(scrapy.Spider):
         soup = bs(r.content, 'lxml')
         for x in soup.find_all('h4'):
             url = 'http://www.jianshu.com' + x.a.get('href', '')
+            print url
             users.add(url)
         return users
 
@@ -48,6 +50,7 @@ class Jianshu(scrapy.Spider):
         except:
             for x in soup.find_all('h4'):
                 url = 'http://www.jianshu.com' + x.a.get('href', '')
+                print url
                 users.add(url)
             return users
 
@@ -72,12 +75,20 @@ class Jianshu(scrapy.Spider):
                 elif '/users/' in tmp:
                     following = self.get_follow(tmp + '/following')
                     follower = self.get_follow(tmp + '/follower')
-                    users.union(following)
-                    users.union(follower)
+                    users = users.union(following)
+                    users = users.union(follower)
             try:
                 url = 'http://www.jianshu.com' + soup.find('div', attrs={'class': 'load-more'}).button.get('data-url', '')
             except:
                 break
+        rds = get_redis('default')
+        try:
+            ret = rds.smembers('user:jianshu:crawl')
+            urls = urls - ret
+            for x in urls:
+                ret = rds.sadd('user:jianshu:crawl', x)
+        except:
+            pass
         return users
 
     def start_requests(self):
