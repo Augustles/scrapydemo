@@ -17,6 +17,7 @@ import time
 
 from datetime import datetime as dte, timedelta
 from bs4 import BeautifulSoup
+from random import choice
 from lxml import etree
 
 from constants import *
@@ -61,7 +62,7 @@ class ProxyProducer(object):
                 td_lst = s.findAll("td")
                 ip, port = td_lst[0].text.strip(), td_lst[1].text.strip()
                 ipstr = "%s:%s" % (ip, port)
-                print(ipstr)
+                print(ipstr, url)
                 if self.valid_proxy(ipstr):
                     self.add_proxy(ipstr)
                     add_cnt += 1
@@ -83,7 +84,7 @@ class ProxyProducer(object):
                     td_lst = s.findAll("td")
                     ip, port = td_lst[0].text.strip(), td_lst[1].text.strip()
                     ipstr = "%s:%s" % (ip, port)
-                    print(ipstr)
+                    print(ipstr, url)
                     if self.valid_proxy(ipstr):
                         self.add_proxy(ipstr)
                         add_cnt += 1
@@ -103,17 +104,18 @@ class ProxyProducer(object):
             for s in soup.select(".table tr")[1:]:
                 td_lst = s.findAll("td")
                 ip, port = td_lst[0].text.strip(), td_lst[1].text.strip()
-                speed = float(td_lst[4].text.rstrip("秒").strip())
+                speed = float(td_lst[4].text.split('.')[0])
                 if speed > 1:
                     continue
                 ipstr = "%s:%s" % (ip, port)
-                print(ipstr)
+                print(ipstr, url)
                 if self.valid_proxy(ipstr):
                     self.add_proxy(ipstr)
                     add_cnt += 1
         return add_cnt
 
     def crawl_from_samair(self):
+        # 代理不可用
         print('...start crawl samair proxy...')
         add_cnt = 0
         for i in range(1, 10):
@@ -124,7 +126,7 @@ class ProxyProducer(object):
             for trobj in driver.find_elements_by_tag_name("tr"):
                 lst = re.findall(r"(\d+.\d+.\d+.\d+:\d+)", trobj.text)
                 for ipstr in lst:
-                    print(ipstr)
+                    print(ipstr, url)
                     if self.valid_proxy(ipstr):
                         self.add_proxy(ipstr)
                         add_cnt += 1
@@ -136,7 +138,9 @@ class ProxyProducer(object):
         for i in [2,3,4]:
             url = "http://www.66ip.cn/nmtq.php?getnum=150&isp=0&anonymoustype=%s&start=&ports=&export=&ipaddress=&area=0&proxytype=2&api=66ip" % i
             try:
-                r = requests.get(url, timeout=6)
+                headers = {'User-Agent': choice(uas)}
+                r = requests.get(url, headers=headers, timeout=10)
+                print r.status_code
             except Exception:
                 continue
             proxy_lst=proxy_lst.union(set(re.findall(r"(\d+.\d+.\d+.\d+:\d+)", r.content)))
@@ -144,6 +148,7 @@ class ProxyProducer(object):
         for ipstr in proxy_lst:
             if self.valid_proxy(ipstr):
                 self.add_proxy(ipstr)
+                print(ipstr, url)
                 add_cnt += 1
         return add_cnt
 
@@ -178,7 +183,7 @@ class ProxyProducer(object):
                     except:
                         continue
                     ipstr = "%s:%s" % (ip, port)
-                    print(ipstr)
+                    print(ipstr, url)
                     if self.valid_proxy(ipstr):
                         self.add_proxy(ipstr)
                         add_cnt += 1
@@ -308,12 +313,32 @@ class TongChengProxyConsumer(ProxyConsumer):
             return False
         return True
 
+class DoubanProxyConsumer(ProxyConsumer):
+    PROXY_KEY = RK_PROXY_IP_DB
+    name = "douban"
+
+    def valid_proxy(self, ipstr):
+        url = 'https://movie.douban.com/'
+        try:
+            ua = random.choice(uas)
+            print ipstr
+            r = requests.get(url,
+                             headers={"User-Agent": ua},
+                             timeout=10,
+                             proxies={"http": "http://%s" % ipstr})
+        except:
+            return False
+        print r.status_code
+        if r.status_code != 200 or "豆瓣电影" not in r.content:
+            return False
+        return True
 
 proxy_producer = ProxyProducer()
 
 if "proxy_list" not in globals():
     proxy_list = {}
 
+    proxy_list[DoubanProxyConsumer.name] = DoubanProxyConsumer()
     proxy_list[ScqcpProxyConsumer.name] = ScqcpProxyConsumer()
     proxy_list[TongChengProxyConsumer.name] = TongChengProxyConsumer()
 

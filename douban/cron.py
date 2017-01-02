@@ -53,6 +53,30 @@ def crawl(crawl_source, crawl_kwargs={}):
         proxy_log.info('srapyd return %s' %res.json())
 
 @check(run_in_local=False)
+def crawl_proxy_xici():
+    from proxy import proxy_producer
+    data = {}
+    cnt = proxy_producer.crawl_from_xici()
+    data["xici"] = cnt
+    return data
+
+@check(run_in_local=False)
+def crawl_proxy_66ip():
+    from proxy import proxy_producer
+    data = {}
+    cnt = proxy_producer.crawl_from_66ip()
+    data["66ip"] = cnt
+    return data
+
+@check(run_in_local=False)
+def crawl_proxy_ip181():
+    from proxy import proxy_producer
+    data = {}
+    cnt = proxy_producer.crawl_from_ip181()
+    data["ip181"] = cnt
+    return data
+
+@check(run_in_local=False)
 def crawl_proxy_haodaili():
     from proxy import proxy_producer
     data = {}
@@ -89,19 +113,16 @@ def main():
     sched = Scheduler(daemonic=False)
 
     # sched.add_cron_job(bus_crawl, hour=17, minute=0, args=['hn96520'])
-    sched.add_cron_job(crawl, hour=2, args=['one'])
-    sched.add_cron_job(crawl, hour=3, args=['zhihu'])
-    sched.add_cron_job(crawl, hour=7, args=['best_db'])
-
-    sched.add_interval_job(crawl, minutes=60, args=['jianshu'])
+    # sched.add_cron_job(crawl, hour=2, args=['one'])
+    # sched.add_cron_job(crawl, hour=3, args=['zhihu'])
+    # sched.add_cron_job(crawl, hour=7, args=['best_db'])
+    # sched.add_interval_job(crawl, minutes=60, args=['jianshu'])
     # 代理ip相关
-    # sched.add_interval_job(crawl_proxy_haodaili, minutes=1)
-    # sched.add_interval_job(crawl_proxy_kxdaili, minutes=5)
-    # sched.add_interval_job(crawl_proxy_ip181, minutes=1)
-    # sched.add_interval_job(crawl_proxy_samair, minutes=1)
-    # sched.add_interval_job(crawl_proxy_66ip, minutes=1)
-    # sched.add_interval_job(crawl_proxy_zdaye, minutes=1)
-    # sched.add_interval_job(crawl_proxy_xici, minutes=1)
+    sched.add_interval_job(crawl_proxy_haodaili, minutes=2)
+    sched.add_interval_job(crawl_proxy_kxdaili, minutes=5)
+    sched.add_interval_job(crawl_proxy_ip181, minutes=3)
+    sched.add_interval_job(crawl_proxy_66ip, minutes=2)
+    sched.add_interval_job(crawl_proxy_xici, minutes=1)
 
     # sched.add_interval_job(check_proxy, minutes=1)
     # sched.add_interval_job(check_consumer_proxy, args=["tongcheng"], minutes=1)

@@ -27,8 +27,13 @@ stdout_hd.setFormatter(fmt)
 proxy_log.addHandler(stdout_hd)
 proxy_log.setLevel(logging.INFO)
 
+# user-agent
+uas = [
+    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.95 Safari/537.36',
+]
 # redis
 REDIS_SERVER_INFO = {'host': '127.0.0.1', 'port': 6379, 'db': '0', 'password': 'nana'}
 RK_PROXY_IP_ALL = "proxy:all"
+RK_PROXY_IP_DB = "proxy:douban"
 RK_PROXY_IP_TC = "proxy:tongcheng"
 RK_PROXY_IP_SCQCP = "proxy:scqcp"

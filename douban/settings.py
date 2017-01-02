@@ -10,42 +10,43 @@
 #     http://scrapy.readthedocs.org/en/latest/topics/spider-middleware.html
 import os
 BOT_NAME = 'douban'
-
+# LOG_FILE='logs/spider.log'
+# LOG_FORMAT= '%(levelname)s %(asctime)s [%(name)s:%(module)s:%(funcName)s:%(lineno)s] [%(exc_info)s] %(message)s'
 SPIDER_MODULES = ['douban.spiders']
 NEWSPIDER_MODULE = 'douban.spiders'
 # LOG_LEVEL = 'WARNING'
 # 开启pipeimage组件
-ITEM_PIPELINES = {
-    # 'douban.pipelines.DoubanPipeline': 500,
-    # 'douban.pipelines.MySQLStorePipeline': 2, # mysql
-    # 'douban.pipelines.MongoDBPipeline': 501,  # mongo
-    # 'scrapy.contrib.pipeline.images.ImagesPipeline': 1, # 默认image的pipe
-    # 'douban.pipelines.DuplicatesPipeline': 502,
-}
+# ITEM_PIPELINES = {
+    # # 'douban.pipelines.DoubanPipeline': 500,
+    # # 'douban.pipelines.MySQLStorePipeline': 2, # mysql
+    # # 'douban.pipelines.MongoDBPipeline': 501,  # mongo
+    # # 'scrapy.contrib.pipeline.images.ImagesPipeline': 1, # 默认image的pipe
+    # # 'douban.pipelines.DuplicatesPipeline': 502,
+# }
 # 下载位置
-IMAGES_STORE = os.getcwd() + 'img'
+# IMAGES_STORE = os.getcwd() + 'img'
 # 爬取速率
-DOWNLOAD_DELAY = 1
+# DOWNLOAD_DELAY = 1
 # 宽度优先, 质量高
-SCHEDULER_ORDER = 'BFO'
+# SCHEDULER_ORDER = 'BFO'
 # 最大并行请求数
-CONCURRENT_REQUESTS_PER_SPIDER = 3
+# CONCURRENT_REQUESTS_PER_SPIDER = 3
 # dns cache提高性能
 # EXTENSIONS = {'scrapy.contrib.resolver.CachingResolver': 0, }
-DOWNLOADER_MIDDLEWARES = {
-    'scrapy.contrib.downloadermiddleware.useragent.UserAgentMiddleware': None,
-    'douban.userAgent.RandomUserAgentMiddleware': 2,  # 随机user-agent
-    # 'douban.pipelines.ProxyMiddleware': 3,  # 代理ip
-}
+# DOWNLOADER_MIDDLEWARES = {
+    # 'scrapy.contrib.downloadermiddleware.useragent.UserAgentMiddleware': None,
+    # 'douban.userAgent.RandomUserAgentMiddleware': 2,  # 随机user-agent
+    # # 'douban.pipelines.ProxyMiddleware': 3,  # 代理ip
+# }
 # douban.spiders为目录, userAgent是文件
 
 # 去重组件
 # DUPEFILTER_CLASS = 'douban.pipelines.SeenURLFilter'
 # mongo设置
-MONGODB_HOST = 'localhost'
-MONGODB_PORT = '27017'
-MONGODB_DATABASE = 'amazon'
-MONGODB_COLLECTION = 'movie'
+# MONGODB_HOST = 'localhost'
+# MONGODB_PORT = '27017'
+# MONGODB_DATABASE = 'amazon'
+# MONGODB_COLLECTION = 'movie'
 
 # 日志
 # LOG_ENABLED = True
@@ -74,6 +75,8 @@ MONGODB_COLLECTION = 'movie'
 
 # 禁止cookies,防止ban
 # COOKIES_ENABLED=False
+# USER_AGENT = 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36'
+
 
 # Disable Telnet Console (enabled by default)
 # TELNETCONSOLE_ENABLED=False

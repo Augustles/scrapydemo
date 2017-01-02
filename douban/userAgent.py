@@ -1,8 +1,24 @@
 # encoding=utf-8
 
-import random
 from scrapy.contrib.downloadermiddleware.useragent import UserAgentMiddleware
+from random import choice
+from utils import gen_bids
 
+class JianshuHeader(object):
+    def process_request(self, request, spider):
+        ug = "Baiduspider"
+        request.headers["User-Agent"] = ug
+        print request.headers
+
+class DoubanHeader(object):
+    def __init__(self):
+        self.bids = gen_bids()
+    def process_request(self, request, spider):
+        ug = "Baiduspider"
+        request.headers["User-Agent"] = ug
+        request.headers["Cookie"] = 'bid=%s' % choice(self.bids)
+        request.headers["Accept-Language"] = "zh-CN,zh"
+        request.headers["Referer"] = 'https://movie.douban.com/'
 
 class RandomUserAgentMiddleware(UserAgentMiddleware):
 
@@ -11,10 +27,10 @@ class RandomUserAgentMiddleware(UserAgentMiddleware):
 
     def process_request(self, request, spider):
         # 随机选择user-agent
-        ua = random.choice(self.user_agent_list)
+        ua = choice(self.user_agent_list)
         if ua:
-            # print ua
             request.headers.setdefault('User-Agent', ua)
+            print request.headers
 
     # the default user_agent_list composes chrome,I E,firefox,Mozilla,opera,netscape
     # for more user agent strings,you can find it in
