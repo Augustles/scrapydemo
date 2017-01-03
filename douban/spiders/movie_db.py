@@ -38,8 +38,10 @@ class Movie_db(scrapy.Spider):
             }
             r = requests.get(url, headers=headers, cookies=cookies)
             soup = bs(r.content, 'lxml')
-            doulist = set([x.get('href', '') for x  in soup.find_all('a') if 'subject' in x.get('href', '')])
-            return doulist
+            # doulist = set([x.get('href', '') for x  in soup.find_all('a') if 'subject' in x.get('href', '')])
+            info = soup.find_all('a')
+            ret = set([x.get('href', '') for x in info if 'review' in x.get('href', '') and '#' not in x.get('href', '') and 'http' in x.get('href', '')])
+            return ret
         except Exception as e:
             self.logger.info('[scrapy] movie error %s items' %(e))
 
@@ -51,11 +53,16 @@ class Movie_db(scrapy.Spider):
             cookies = {
                 'bid': choice(gen_bids()),
             }
+            ret = set()
             r = requests.get(url, headers=headers, cookies=cookies)
             soup = bs(r.content, 'lxml')
             print r.url
-            pre = soup.find('div', attrs={'class': 'paginator'}).find_all('a')[-2]
-            ret = set()
+            try:
+                pre = soup.find('div', attrs={'class': 'paginator'}).find_all('a')[-2]
+            except:
+                info = soup.find_all('a')
+                ret = set([x.get('href', '') for x in info if 'review' in x.get('href', '') and '#' not in x.get('href', '') and 'http' in x.get('href', '')])
+                return ret
             try:
                 start = int(pre.get('href', '',).split('?')[-1].split('&')[0].split('=')[1])
                 page = int(pre.text)
@@ -64,8 +71,10 @@ class Movie_db(scrapy.Spider):
                 page = 0
                 n = 0
             for x in xrange(page-1):
-                tmp = '%s?start=%s&sort=seq&sub_type=' %(url, x*n)
-                print tmp
+                # tag to get subject
+                # tmp = '%s?start=%s&sort=seq&sub_type=' %(url, x*n)
+                # subject to get review
+                tmp = '%s?start=%s' %(url, x*n)
                 urls = self.from_doulist(tmp)
                 ret = ret.union(urls)
             return ret
@@ -81,7 +90,6 @@ class Movie_db(scrapy.Spider):
         cookies = {
             'bid': choice(gen_bids()),
         }
-        print cookies
         r = requests.get(url, headers=headers, cookies=cookies)
         soup = bs(r.content, 'lxml')
         print soup
@@ -110,13 +118,36 @@ class Movie_db(scrapy.Spider):
         # url = 'https://movie.douban.com/tag/1890s'
         # urls = self.from_doulist_list(url)
         # start = 'https://movie.douban.com/tag/'
-        start = 'https://movie.douban.com/tag/?view=cloud'
-        urls = self.get_subject(start)
-        # start = 'https://movie.douban.com/tag/%E6%97%A5%E6%9C%AC/'
+        # start = 'https://movie.douban.com/tag/?view=cloud'
+        # urls = self.get_subject(start)
+        # start = 'https://movie.douban.com/subject/26353372/reviews'
         # urls = self.from_doulist_list(start)
-        # print len(urls)
+        urls = set()
+        rds = get_redis('default')
+        qs = rds.smembers('movie:douban:crawl')
+        for x in qs:
+            ret = self.from_doulist_list('%s%s'%(x, 'reviews/'))
+            urls = urls.union(ret)
+        print len(urls)
         for url in urls:
-            yield scrapy.Request(url, callback=self.parse)
+            if is_url(url) and 'reviews' not in url:
+                yield scrapy.Request(url, callback=self.parse_review)
+
+    def parse_review(self, response):
+        soup = bs(response.body, 'lxml')
+        try:
+            title = soup.find('span', attrs={'property': 'v:summary'}).text
+            author = soup.find('span', attrs={'property': 'v:reviewer'}).text
+            attrs = dict(
+                title=title,
+                url=response.url,
+                author=author,
+                source='review_db'
+            )
+            yield Jsitem(**attrs)
+        except Exception as e:
+            self.logger.info('[scrapy] movie error %s items' %(e))
+
 
     def parse(self, response):
         soup = bs(response.body, 'lxml')

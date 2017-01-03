@@ -3,7 +3,7 @@
 import scrapy
 import time
 
-# from BusCrawl.utils.tool import get_redis
+# from douban.utils import get_redis
 from datetime import datetime as dte
 
 
