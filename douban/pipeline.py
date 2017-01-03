@@ -28,7 +28,10 @@ class MongoDBPipeline(object):
         data = dict(item)
         data['update_datetime'] = dte.now()
         data['create_datetime'] = dte.now()
-        link_id = md5('%(title)s-%(url)s' %data)
+        if data['source'] in ['douyu',]:
+            link_id = md5('%(url)s' %data)
+        else:
+            link_id = md5('%(title)s-%(url)s' %data)
         print link_id
         data['link_id'] = link_id
         pk = {
