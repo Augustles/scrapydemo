@@ -1,4 +1,10 @@
 # Ignore files
+# scrapyd-deploy生成的文件
+build/*
+dbs/*
+eggs/*
+project.egg-info/*
+setup.py
 *.pid
 *.zip
 *.png
