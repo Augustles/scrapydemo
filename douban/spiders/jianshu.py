@@ -32,7 +32,6 @@ class Jianshu(scrapy.Spider):
         soup = bs(r.content, 'lxml')
         for x in soup.find_all('h4'):
             url = 'http://www.jianshu.com' + x.a.get('href', '')
-            print url
             users.add(url)
         return users
 
@@ -40,7 +39,6 @@ class Jianshu(scrapy.Spider):
         users = set()
         r = requests.get(url)
         soup = bs(r.content, 'lxml')
-        print r.url
         try:
             url = soup.find('li', attrs={'class': 'last'}).a.get('href', '')
             tmp = url.split('=')
@@ -50,7 +48,6 @@ class Jianshu(scrapy.Spider):
         except:
             for x in soup.find_all('h4'):
                 url = 'http://www.jianshu.com' + x.a.get('href', '')
-                print url
                 users.add(url)
             return users
 
@@ -94,7 +91,7 @@ class Jianshu(scrapy.Spider):
     def start_requests(self):
         url = 'http://www.jianshu.com/'
         # urls = self.get_post(url)
-        url = 'http://www.jianshu.com/users/2a6a6a794e37/followers'
+        # url = 'http://www.jianshu.com/users/2a6a6a794e37/followers'
         users = self.get_post(url)
         print len(users)
         for x in users:
