@@ -30,6 +30,7 @@ class Douyu(scrapy.Spider):
         dr.get(url)
         soup = bs(dr.page_source, 'lxml')
         page = max([int(x.text) for x in soup.find('div', attrs={'class': 'tcd-page-code'}).find_all('a') if x.text.isdigit()])
+        dr.quit()
         return page
 
     def start_requests(self):
