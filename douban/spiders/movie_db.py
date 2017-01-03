@@ -43,6 +43,7 @@ class Movie_db(scrapy.Spider):
             ret = set([x.get('href', '') for x in info if 'review' in x.get('href', '') and '#' not in x.get('href', '') and 'http' in x.get('href', '')])
             return ret
         except Exception as e:
+            return set()
             self.logger.info('[scrapy] movie error %s items' %(e))
 
     def from_doulist_list(self, url):
@@ -80,6 +81,7 @@ class Movie_db(scrapy.Spider):
             return ret
         except Exception as e:
             self.logger.info('[scrapy] movie error %s items' %(e))
+            return set()
 
 
     def get_subject(self, url):
@@ -122,16 +124,13 @@ class Movie_db(scrapy.Spider):
         # urls = self.get_subject(start)
         # start = 'https://movie.douban.com/subject/26353372/reviews'
         # urls = self.from_doulist_list(start)
-        urls = set()
         rds = get_redis('default')
         qs = rds.smembers('movie:douban:crawl')
         for x in qs:
             ret = self.from_doulist_list('%s%s'%(x, 'reviews/'))
-            urls = urls.union(ret)
-        print len(urls)
-        for url in urls:
-            if is_url(url) and 'reviews' not in url:
-                yield scrapy.Request(url, callback=self.parse_review)
+            for y in ret:
+                if is_url(y) and 'reviews' not in y:
+                    yield scrapy.Request(y, callback=self.parse_review)
 
     def parse_review(self, response):
         soup = bs(response.body, 'lxml')
