@@ -115,10 +115,11 @@ def main():
     # sched.add_cron_job(bus_crawl, hour=17, minute=0, args=['hn96520'])
     # sched.add_cron_job(crawl, hour=2, args=['one'])
     sched.add_cron_job(crawl, hour=3, args=['zhihu'])
-    # sched.add_cron_job(crawl, hour=7, args=['best_db'])
+    sched.add_cron_job(crawl, hour=7, args=['best_db'])
     # sched.add_interval_job(crawl, minutes=60, args=['jianshu'])
     # 代理ip相关
-    sched.add_interval_job(crawl, minutes=30, args=['jianshu'])
+    sched.add_interval_job(crawl, minutes=30, args=['douyu'])
+    sched.add_interval_job(crawl, minutes=60, args=['jianshu'])
     sched.add_interval_job(crawl_proxy_haodaili, minutes=2)
     sched.add_interval_job(crawl_proxy_kxdaili, minutes=5)
     sched.add_interval_job(crawl_proxy_ip181, minutes=3)
