@@ -13,7 +13,7 @@ class MongoDBPipeline(object):
         self.port = 27017
         self.db = 'web'
         self.col = 'jianshu'
-        self.client = pymongo.MongoClient(self.server, self.port)
+        self.client = pymongo.MongoClient(self.server, self.port, connect=False)
         db = self.client[self.db]
         self.collection = db[self.col]
 
