@@ -8,7 +8,6 @@ class JianshuHeader(object):
     def process_request(self, request, spider):
         ug = "Baiduspider"
         request.headers["User-Agent"] = ug
-        print request.headers
 
 class DoubanHeader(object):
     def __init__(self):
@@ -30,7 +29,6 @@ class RandomUserAgentMiddleware(UserAgentMiddleware):
         ua = choice(self.user_agent_list)
         if ua:
             request.headers.setdefault('User-Agent', ua)
-            print request.headers
 
     # the default user_agent_list composes chrome,I E,firefox,Mozilla,opera,netscape
     # for more user agent strings,you can find it in
