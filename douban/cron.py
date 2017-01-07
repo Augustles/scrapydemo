@@ -6,6 +6,7 @@
 import requests
 import traceback
 import time
+import os
 
 from constants import proxy_log
 from apscheduler.scheduler import Scheduler
@@ -109,6 +110,14 @@ def check_consumer_proxy(name):
         check_remove_proxy_ip.delay(name, ipstr)
     return consumer.proxy_size()
 
+@check(run_in_local=False)
+def check_kill_phantomjs():
+    # phantomjs没有成功退出
+    cmd = "kill -9 `ps aux|grep phantomjs|awk '{print $2}'`"
+    stats = os.system(cmd)
+    if stats:
+        return 'success kill PhantomJS'
+
 def main():
     sched = Scheduler(daemonic=False)
 
@@ -120,6 +129,7 @@ def main():
     # 代理ip相关
     sched.add_interval_job(crawl, minutes=60, args=['douyu'])
     sched.add_interval_job(crawl, minutes=240, args=['jianshu'])
+    sched.add_interval_job(check_kill_phantomjs, minutes=360)
     sched.add_interval_job(crawl_proxy_haodaili, minutes=2)
     sched.add_interval_job(crawl_proxy_kxdaili, minutes=5)
     sched.add_interval_job(crawl_proxy_ip181, minutes=3)

@@ -62,7 +62,7 @@ class ProxyProducer(object):
                 td_lst = s.findAll("td")
                 ip, port = td_lst[0].text.strip(), td_lst[1].text.strip()
                 ipstr = "%s:%s" % (ip, port)
-                print(ipstr, url)
+                # print(ipstr, url)
                 if self.valid_proxy(ipstr):
                     self.add_proxy(ipstr)
                     add_cnt += 1
@@ -84,7 +84,7 @@ class ProxyProducer(object):
                     td_lst = s.findAll("td")
                     ip, port = td_lst[0].text.strip(), td_lst[1].text.strip()
                     ipstr = "%s:%s" % (ip, port)
-                    print(ipstr, url)
+                    # print(ipstr, url)
                     if self.valid_proxy(ipstr):
                         self.add_proxy(ipstr)
                         add_cnt += 1
@@ -108,7 +108,7 @@ class ProxyProducer(object):
                 if speed > 1:
                     continue
                 ipstr = "%s:%s" % (ip, port)
-                print(ipstr, url)
+                # print(ipstr, url)
                 if self.valid_proxy(ipstr):
                     self.add_proxy(ipstr)
                     add_cnt += 1
@@ -148,7 +148,7 @@ class ProxyProducer(object):
         for ipstr in proxy_lst:
             if self.valid_proxy(ipstr):
                 self.add_proxy(ipstr)
-                print(ipstr, url)
+                # print(ipstr, url)
                 add_cnt += 1
         return add_cnt
 
@@ -183,7 +183,7 @@ class ProxyProducer(object):
                     except:
                         continue
                     ipstr = "%s:%s" % (ip, port)
-                    print(ipstr, url)
+                    # print(ipstr, url)
                     if self.valid_proxy(ipstr):
                         self.add_proxy(ipstr)
                         add_cnt += 1

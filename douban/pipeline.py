@@ -32,7 +32,7 @@ class MongoDBPipeline(object):
             link_id = md5('%(url)s' %data)
         else:
             link_id = md5('%(title)s-%(url)s' %data)
-        print link_id
+        # print link_id
         data['link_id'] = link_id
         pk = {
             'link_id': link_id
