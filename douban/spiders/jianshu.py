@@ -90,12 +90,13 @@ class Jianshu(scrapy.Spider):
 
     def start_requests(self):
         url = 'http://www.jianshu.com/'
+        yield scrapy.Request(url, callback=self.parse_content)
         # urls = self.get_post(url)
         # url = 'http://www.jianshu.com/users/2a6a6a794e37/followers'
-        users = self.get_post(url)
-        print len(users)
-        for x in users:
-            yield scrapy.Request(x, callback=self.parse_user)
+        # users = self.get_post(url)
+        # print len(users)
+        # for x in users:
+            # yield scrapy.Request(x, callback=self.parse_user)
         # for x in urls:
             # tmp_url = 'http://www.jianshu.com%s' % x
             # print tmp_url
@@ -135,13 +136,16 @@ class Jianshu(scrapy.Spider):
 
     def parse_content(self, response):
         soup = bs(response.body, 'lxml')
-        title = soup.h1.text
-        author = soup.find('a', attrs={'class': 'author-name'}).text
+        qs = soup.find('ul', attrs={'class': 'note-list'}).find_all('li')
         url = response.url
-        attrs = dict(
-            title=title,
-            url=url,
-            author=author,
-            source='jianshu'
-        )
-        yield Jsitem(**attrs)
+        for x in qs:
+            title = x.find('a', attrs={'class': 'title'}).text
+            author = x.find('div', attrs={'class': 'author'}).text
+            attrs = dict(
+                title=title,
+                url=url,
+                author=author,
+                source='jianshu'
+            )
+            print attrs
+            yield Jsitem(**attrs)
