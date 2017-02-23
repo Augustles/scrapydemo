@@ -14,6 +14,7 @@ class Daily_zhihu(scrapy.Spider):
     allowed_domains = []
     start_urls = []
     custom_settings = {
+        'DNSCACHE_ENABLED': True,
         "ITEM_PIPELINES": {
             'douban.pipeline.MongoDBPipeline': 300,
         },
