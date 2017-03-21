@@ -333,6 +333,25 @@ class DoubanProxyConsumer(ProxyConsumer):
             return False
         return True
 
+class MouserProxyConsumer(ProxyConsumer):
+    PROXY_KEY = 'proxy:mouser'
+    name = "mouser"
+
+    def valid_proxy(self, ipstr):
+        url = 'http://www.mouser.cn/'
+        try:
+            ua = random.choice(uas)
+            r = requests.get(url,
+                             headers={"User-Agent": ua},
+                             timeout=10,
+                             proxies={"http": "http://%s" % ipstr})
+        except:
+            return False
+        print ipstr, r.status_code, 1111
+        if r.status_code != 200:
+            return False
+        return True
+
 proxy_producer = ProxyProducer()
 
 if "proxy_list" not in globals():
@@ -341,6 +360,7 @@ if "proxy_list" not in globals():
     proxy_list[DoubanProxyConsumer.name] = DoubanProxyConsumer()
     proxy_list[ScqcpProxyConsumer.name] = ScqcpProxyConsumer()
     proxy_list[TongChengProxyConsumer.name] = TongChengProxyConsumer()
+    proxy_list[MouserProxyConsumer.name] = MouserProxyConsumer()
 
     for name, obj in proxy_list.items():
         proxy_producer.registe_consumer(obj)

@@ -123,13 +123,13 @@ def main():
 
     # sched.add_cron_job(bus_crawl, hour=17, minute=0, args=['hn96520'])
     # sched.add_cron_job(crawl, hour=2, args=['one'])
-    sched.add_cron_job(crawl, hour=3, args=['zhihu'])
-    sched.add_cron_job(crawl, hour=7, args=['best_db'])
+    # sched.add_cron_job(crawl, hour=3, args=['zhihu'])
+    # sched.add_cron_job(crawl, hour=7, args=['best_db'])
     # sched.add_interval_job(crawl, minutes=60, args=['jianshu'])
     # 代理ip相关
-    sched.add_interval_job(crawl, minutes=60, args=['douyu'])
-    sched.add_interval_job(crawl, minutes=240, args=['jianshu'])
-    sched.add_interval_job(check_kill_phantomjs, minutes=360)
+    # sched.add_interval_job(crawl, minutes=60, args=['douyu'])
+    # sched.add_interval_job(crawl, minutes=240, args=['jianshu'])
+    # sched.add_interval_job(check_kill_phantomjs, minutes=360)
     sched.add_interval_job(crawl_proxy_haodaili, minutes=2)
     sched.add_interval_job(crawl_proxy_kxdaili, minutes=5)
     sched.add_interval_job(crawl_proxy_ip181, minutes=3)
@@ -137,7 +137,8 @@ def main():
     sched.add_interval_job(crawl_proxy_xici, minutes=1)
 
     # sched.add_interval_job(check_proxy, minutes=1)
-    # sched.add_interval_job(check_consumer_proxy, args=["tongcheng"], minutes=1)
+    sched.add_interval_job(check_consumer_proxy, args=["mouser"], minutes=1)
+    sched.add_interval_job(check_consumer_proxy, args=["mouser"], minutes=1)
     # sched.add_interval_job(check_consumer_proxy, args=["bus365"], minutes=1)
 
 

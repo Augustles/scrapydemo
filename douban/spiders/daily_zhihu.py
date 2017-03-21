@@ -7,6 +7,8 @@ from douban.js_items import Jsitem
 from datetime import datetime as dte
 from scrapy.conf import settings
 from douban.utils import md5
+from scrapy.shell import inspect_response
+import json
 
 
 class Daily_zhihu(scrapy.Spider):
@@ -16,10 +18,10 @@ class Daily_zhihu(scrapy.Spider):
     custom_settings = {
         'DNSCACHE_ENABLED': True,
         "ITEM_PIPELINES": {
-            'douban.pipeline.MongoDBPipeline': 300,
+            'douban.pipelines.JsonWriterPipeline': 300,
         },
         'DOWNLOADER_MIDDLEWARES': {
-            'douban.userAgent.JianshuHeader': 2,
+            'douban.userAgent.ZhihuHeader': 2,
         },
         'DOWNLOAD_DELAY': 0.75,
         # "RANDOMIZE_DOWNLOAD_DELAY": True,
@@ -27,22 +29,39 @@ class Daily_zhihu(scrapy.Spider):
 
 
     def start_requests(self):
-        url = 'http://daily.zhihu.com/'
-        for x in xrange(1):
+        # url = 'http://daily.zhihu.com/'
+        for x in xrange(0, 120, 20):
+            url = 'https://zhuanlan.zhihu.com/api/columns/yeka52/posts?limit=20&offset=%s' %(x)
+            print url
             yield scrapy.Request(url, callback=self.parse)
 
     def parse(self, response):
-        soup = bs(response.body, 'lxml')
-        qs = soup.find('div', attrs={'class': 'main-content-wrap'}).find_all('div', attrs={'class': 'wrap'})
-        self.logger.info('[scrapy] crawl %s items' %(len(qs)))
+        # soup = bs(response.body, 'lxml')
+        # inspect_response(response, self)
+        # qs = soup.find('div', attrs={'class': 'main-content-wrap'}).find_all('div', attrs={'class': 'wrap'})
+
+        qs = json.loads(response.body)
+        self.logger.info('[scrapy] crawl %s items url: %s' %(len(qs), response.url))
         for x in qs:
             try:
-                url = 'http://daily.zhihu.com' + x.find('a').get('href', '')
+                # url = 'https://www.zhihu.com' + x['url']
+                name = x['author']['name']
+                title = x['title']
+                content = x['content']
+                content = bs(content, 'lxml')
+                content = content.text.encode('utf-8')
                 attrs = dict(
-                        url=url,
-                        source='daily_zhihu',
-                        )
-                yield scrapy.Request(url, meta={'attrs': attrs}, callback=self.parse_content)
+                    # url=url,
+                    source='zhihu',
+                    name=name,
+                    title=title,
+                    content=content,
+                    )
+                # print attrs
+                with open('yeka52_demo.json', 'a+') as f:
+                    f.write(json.dumps(attrs)+'\n')
+                # yield Jsitem(**attrs)
+                # yield scrapy.Request(url, meta={'attrs': attrs}, callback=self.parse_content)
             except:
                 pass
 

@@ -35,4 +35,5 @@ Scheduler(调度器)从scrapy engine接受request排序并列入队列
 Downloader抓去网页, 并把response返回spider
 Spider定制爬虫爬取的规则
 Item Pipeline(项目管道)用来处理从网页抽取的项目
-
+14. 深度优先搜索策略(顺藤摸瓜)主要涉及到的是堆栈(stack, 先进后出), scrapy默认深度优先搜索策略
+15. 广度优先搜索策略主要涉及到的是队列(queue, 先进先出)

@@ -36,66 +36,66 @@ class DoubanPipeline(ImagesPipeline):
 
 
 # 根据url去重
-import os
-from scrapy.dupefilters import RFPDupeFilter
+# import os
+# from scrapy.dupefilters import RFPDupeFilter
 
 
-class SeenURLFilter(RFPDupeFilter):
-    """A dupe filter that considers the URL"""
+# class SeenURLFilter(RFPDupeFilter):
+    # """A dupe filter that considers the URL"""
 
-    def __init__(self, path=None, debug=False):
-        self.urls_seen = set()
-        RFPDupeFilter.__init__(self, path)
+    # def __init__(self, path=None, debug=False):
+        # self.urls_seen = set()
+        # RFPDupeFilter.__init__(self, path)
 
-    def request_seen(self, request):
-        fp = self.request_fingerprint(request)
-        if fp in self.fingerprints:
-            self.fingerprints.add(fp)
-            return True
-        self.fingerprints.add(fp)
-        if self.file:
-            self.file.write(fp + os.linesep)
+    # def request_seen(self, request):
+        # fp = self.request_fingerprint(request)
+        # if fp in self.fingerprints:
+            # self.fingerprints.add(fp)
+            # return True
+        # self.fingerprints.add(fp)
+        # if self.file:
+            # self.file.write(fp + os.linesep)
 
-# mongo已经爬去'out'字段为1
-class CustomFilter(RFPDupeFilter):
+# # mongo已经爬去'out'字段为1
+# class CustomFilter(RFPDupeFilter):
 
-    def __init__(self, path=None, other=None):
-        inmem = [it['url'] for it in MongoClient(settings['DBINFO']).nbbs.dsl.find({'out': 1})]
-        self.already_seen = set(inmem)
-        RFPDupeFilter.__init__(self, path, other)
+    # def __init__(self, path=None, other=None):
+        # inmem = [it['url'] for it in MongoClient(settings['DBINFO']).nbbs.dsl.find({'out': 1})]
+        # self.already_seen = set(inmem)
+        # RFPDupeFilter.__init__(self, path, other)
 
-    def request_seen(self, request):
-        if request.url in self.already_seen:
-            return True
-        else:
-            pass
+    # def request_seen(self, request):
+        # if request.url in self.already_seen:
+            # return True
+        # else:
+            # pass
 
-# import base64
-import random
-# Start your middleware class
+# # import base64
+# import random
+# # Start your middleware class
 
-# 布隆过滤, 对千万级别url有显著效果
-from pybloom import BloomFilter
+# # 布隆过滤, 对千万级别url有显著效果
+# from pybloom import BloomFilter
 
-class BLOOMDupeFilter(BaseDupeFilter):
-    def __init__(self, path=None):
-        self.file = None
-        self.fingerprints = BloomFilter(capacity=1000000, error_rate=0.001)
+# class BLOOMDupeFilter(BaseDupeFilter):
+    # def __init__(self, path=None):
+        # self.file = None
+        # self.fingerprints = BloomFilter(capacity=1000000, error_rate=0.001)
 
-    @classmethod
-    def from_settings(cls, settings):
-        return cls(job_dir(settings))
+    # @classmethod
+    # def from_settings(cls, settings):
+        # return cls(job_dir(settings))
 
-    def request_seen(self, request):
-        fp = request.url
-        if fp in self.fingerprints:
-            return True
-        self.fingerprints.add(fp)
-        return False
+    # def request_seen(self, request):
+        # fp = request.url
+        # if fp in self.fingerprints:
+            # return True
+        # self.fingerprints.add(fp)
+        # return False
 
-    def close(self, reason):
-        self.fingerprints = None
-        
+    # def close(self, reason):
+        # self.fingerprints = None
+
 # 代理组件
 class ProxyMiddleware(object):
     # overwrite process request
@@ -197,11 +197,11 @@ class MongoDBPipeline(object):
 #         return md5(item['link']).hexdigest()
 
 # 保存json
-# import json
-# class JsonWriterPipeline(object):
-#     def __init__(self):
-#         self.file = open('items.jl', 'wb')
-#     def process_item(self, item, spider):
-#         line = json.dumps(dict(item)) + "n"
-#         self.file.write(line)
-#         return item
+import json
+class JsonWriterPipeline(object):
+    def __init__(self):
+        self.file = open('items.jl', 'wb')
+    def process_item(self, item, spider):
+        line = json.dumps(dict(item)) + "n"
+        self.file.write(line)
+        return item

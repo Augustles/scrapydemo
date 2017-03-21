@@ -9,6 +9,13 @@ class JianshuHeader(object):
         ug = "Baiduspider"
         request.headers["User-Agent"] = ug
 
+class ZhihuHeader(object):
+    def process_request(self, request, spider):
+        ug = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36"
+        request.headers["User-Agent"] = ug
+        request.headers['Accept'] = 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8'
+        print request.headers
+
 class DoubanHeader(object):
     def __init__(self):
         self.bids = gen_bids()

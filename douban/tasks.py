@@ -22,4 +22,5 @@ def check_remove_proxy_ip(self, proxy_name, ipstr):
     consumer = get_proxy(proxy_name)
     if not consumer.valid_proxy(ipstr):
         consumer.remove_proxy(ipstr)
+        print 'remove %s'%ipstr
         return "removed"
