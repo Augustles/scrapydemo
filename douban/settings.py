@@ -9,8 +9,12 @@
 #     http://scrapy.readthedocs.org/en/latest/topics/downloader-middleware.html
 #     http://scrapy.readthedocs.org/en/latest/topics/spider-middleware.html
 import os
+import time
+# scrapy crawl douban -s LOG_FILE=/tmp/dmoz.log
 BOT_NAME = 'douban'
-# LOG_FILE='logs/spider.log'
+
+fn = time.strftime('%Y-%m-%d|%H:%M:%S',time.localtime(time.time())) + '.log'
+LOG_FILE='/tmp/scrapy/logs/%s' %fn
 # LOG_FORMAT= '%(levelname)s %(asctime)s [%(name)s:%(module)s:%(funcName)s:%(lineno)s] [%(exc_info)s] %(message)s'
 SPIDER_MODULES = ['douban.spiders']
 NEWSPIDER_MODULE = 'douban.spiders'
@@ -119,3 +123,8 @@ NEWSPIDER_MODULE = 'douban.spiders'
 # HTTPCACHE_DIR='httpcache'
 # HTTPCACHE_IGNORE_HTTP_CODES=[]
 # HTTPCACHE_STORAGE='scrapy.extensions.httpcache.FilesystemCacheStorage'
+DB_HOST = 'localhost'
+DB_PORT = 3306
+DB_USER = 'user'
+DB_PASSWD = 'password'
+DB_DB = 'database'
